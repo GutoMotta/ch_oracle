@@ -24,7 +24,7 @@ class ChOracle(object):
 
         labels = [self._match_feature(f) for f in np.transpose(self.chroma)]
 
-        labels_onsets_offsets = self.labels_onsets_offsets(labels)
+        labels_onsets_offsets = self._labels_onsets_offsets(labels)
 
         self.labels, self.onsets, self.offsets = labels_onsets_offsets
 
@@ -50,7 +50,7 @@ class ChOracle(object):
 
         return best_match
 
-    def labels_onsets_offsets(self, labels):
+    def _labels_onsets_offsets(self, labels):
         onsets = [0]
         offsets = []
 
@@ -62,8 +62,11 @@ class ChOracle(object):
 
         return (labels, onsets, offsets)
 
-    def save_evaluation_file(self):
-        file = open("outputs/%s.lab" % self.filename, "w")
+    def labels_onsets_offsets(self):
+        return (self.labels, self.onsets, self.offsets)
+
+    def save_evaluation_file(self, filename):
+        file = open(filename, "w")
         for i in range(0, len(self.labels)):
             onset = self.onsets[i]
             offset = self.offsets[i]
@@ -105,7 +108,3 @@ class ChOracle(object):
     #     # TODO porque esta vindo como string?
     #     # print(type(x[1][1]).__name__)
     #     return x
-
-# t = float(sys.argv[2]) if len(sys.argv) >= 3 else 0.2
-c = ChOracle(sys.argv[1], templates_filename="chord_templates.yml")
-c.save_evaluation_file()
