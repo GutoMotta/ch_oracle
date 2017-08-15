@@ -18,6 +18,8 @@ class ChordMatcher(object):
         self.pitch_names = config["pitch_names"]
 
     def chords_match(self, ca, cb):
+        if ca == "N" or cb == "N":
+            return False
         return self.chord_notes(ca) == self.chord_notes(cb)
 
     def chord_notes(self, chord):
