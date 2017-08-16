@@ -63,5 +63,6 @@ class ChordMatcher(object):
         return i - interval_str.count("b") + interval_str.count("#")
 
     def parse_pitch(self, pitch):
-        i = self.pitches[re.split("b|#", pitch)[0]]
+        ch = re.split("b|#", pitch)[0]
+        i = self.pitches[re.split("/", ch)[0]]
         return self.pitch_names[i - pitch.count("b") + pitch.count("#")]
