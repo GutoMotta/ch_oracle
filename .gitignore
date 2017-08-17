@@ -1,4 +1,5 @@
 inputs
-outputs
+outputs/*
+!outputs/ground_truth/
 samples
 measures/*

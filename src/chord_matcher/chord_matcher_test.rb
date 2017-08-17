@@ -19,6 +19,7 @@ assert_match "A", "A:maj"
 assert_match "Fbb:min", "D#:min"
 assert_match "B:maj9", "B:maj7(2)"
 assert_match "B:maj9", "B:maj7/2"
+assert_match "A:min/b3", "A:min(b3)"
 
 assert_not_match "A", "A:min"
 

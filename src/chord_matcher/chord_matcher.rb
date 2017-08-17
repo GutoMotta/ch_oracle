@@ -1,7 +1,9 @@
 require 'yaml'
 
 class ChordMatcher
-  def initialize(config_file="chord_matcher.yml")
+  def initialize(config_file="chord_matcher.yml", debug: false)
+    @debug = debug
+
     config = YAML.load_file(config_file)
     @shorthands = config["shorthands"]
     @intervals = config["intervals"]
@@ -10,6 +12,7 @@ class ChordMatcher
   end
 
   def compare(chord_a, chord_b)
+    print "#{chord_a} \t #{chord_b}\n" if @debug
     return false if chord_a == "N" || chord_b == "N"
     notes(chord_a) == notes(chord_b)
   end
@@ -56,7 +59,7 @@ class ChordMatcher
   end
 
   def parse_interval(interv)
-    i = interv.to_i
+    i = interv[/\d+/].to_i
     i %= 7 if i > 7
     @intervals[i] + interv.count("#") - interv.count("b")
   end
