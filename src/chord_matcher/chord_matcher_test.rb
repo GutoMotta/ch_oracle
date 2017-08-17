@@ -1,4 +1,4 @@
-load 'chord_matcher.rb'
+require File.expand_path("../chord_matcher.rb", __FILE__)
 
 @matcher = ChordMatcher.new("chord_matcher.yml")
 

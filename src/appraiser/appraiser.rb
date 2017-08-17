@@ -1,5 +1,5 @@
 require 'yaml'
-require_relative "../chord_matcher/chord_matcher.rb"
+require File.expand_path("../../chord_matcher/chord_matcher.rb", __FILE__)
 
 class Appraiser
   attr_reader :true_positives, :false_positives, :false_negatives,
