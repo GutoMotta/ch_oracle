@@ -1,5 +1,6 @@
 inputs
 outputs/*
 !outputs/ground_truth/
+!outputs/list.yml
 samples
 measures/*
