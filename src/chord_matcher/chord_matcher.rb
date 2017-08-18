@@ -31,6 +31,7 @@ class ChordMatcher
 
   def parse_pitch(chord)
     pitch = chord.split(":")[0]
+    pitch = pitch.split("/")[0]
     root = pitch.delete("b#")
     @pitch_index[root] + pitch.count("#") - pitch.count("b")
   end

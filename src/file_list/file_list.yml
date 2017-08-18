@@ -12,7 +12,7 @@ files:
     - 06-ask_me_why
     - 07-please_please_me
     - 08-love_me_do
-    - 09-p.s._i_love_you
+    - 09-ps_i_love_you
     - 10-baby_its_you
     - 11-do_you_want_to_know_a_secret
     - 12-a_taste_of_honey
@@ -23,7 +23,7 @@ files:
     - 02-all_ive_got_to_do
     - 03-all_my_loving
     - 04-dont_bother_me
-    - 05-little_me
+    - 05-little_child
     - 06-till_there_was_you
     - 07-please_mister_postman
     - 08-roll_over_beethoven
@@ -53,8 +53,8 @@ files:
     - 03-babys_in_black
     - 04-rock_and_roll_music
     - 05-ill_follow_the_sun
-    - 06-mr._moonlight
-    - 07-medley_a._kansas_city_b._hey,_hey,_hey,_hey
+    - 06-mr_moonlight
+    - 07-kansas_city-_hey,_hey,_hey,_hey
     - 08-eight_days_a_week
     - 09-words_of_love
     - 10-honey_dont
@@ -74,12 +74,12 @@ files:
     - 09-its_only_love
     - 10-you_like_me_too_much
     - 11-tell_me_what_you_see
-    - 12-i`ve_just_seen_a_face
+    - 12-ive_just_seen_a_face
     - 13-yesterday
     - 14-dizzy_miss_lizzy
   06-rubber_soul:
     - 01-drive_my_car
-    - 02-norwegian_wood_(the_bird_has_flown)
+    - 02-norwegian_wood_(this_bird_has_flown)
     - 03-you_wont_see_me
     - 04-nowhere_man
     - 05-think_for_yourself
@@ -108,7 +108,7 @@ files:
     - 13-got_to_get_you_into_my_life
     - 14-tomorrow_never_knows
   08-sgt_peppers_lonely_hearts_club_band:
-    - 01-sgt._peppers_lonely_hearts_club_band
+    - 01-sgt_peppers_lonely_hearts_club_band
     - 02-with_a_little_help_from_my_friends
     - 03-lucy_in_the_sky_with_diamonds
     - 04-getting_better
@@ -119,7 +119,7 @@ files:
     - 09-when_im_sixty-four
     - 10-lovely_rita
     - 11-good_morning_good_morning
-    - 12-_sgt._peppers_lonely_hearts_club_band_(reprise)
+    - 12-sgt_peppers_lonely_hearts_club_band_(reprise)
     - 13-a_day_in_the_life
   09-magical_mystery_tour:
     - 01-magical_mystery_tour
@@ -134,7 +134,7 @@ files:
     - 10-baby_youre_a_rich_man
     - 11-all_you_need_is_love
   10cd1-the_beatles:
-    - 01-back_in_the_u.s.s.r.
+    - 01-back_in_the_ussr
     - 02-dear_prudence
     - 03-glass_onion
     - 04-ob-la-di,_ob-la-da
@@ -176,7 +176,7 @@ files:
     - 08-because
     - 09-you_never_give_me_your_money
     - 10-sun_king
-    - 11-mean_mr._mustard
+    - 11-mean_mr_mustard
     - 12-polythene_pam
     - 13-she_came_in_through_the_bathroom_window
     - 14-golden_slumbers
