@@ -1,6 +1,6 @@
 require File.expand_path("../chord_matcher.rb", __FILE__)
 
-@matcher = ChordMatcher.new("chord_matcher.yml")
+@matcher = ChordMatcher.new
 
 def assert_match(chord_a, chord_b)
   msg = "#{chord_a} didn't match #{chord_b}"

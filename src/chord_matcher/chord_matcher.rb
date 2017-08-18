@@ -1,9 +1,10 @@
 require 'yaml'
 
 class ChordMatcher
-  def initialize(config_file="chord_matcher.yml", debug: false)
+  def initialize(config_file=nil, debug: false)
     @debug = debug
 
+    config_file ||= File.expand_path("../chord_matcher.yml", __FILE__)
     config = YAML.load_file(config_file)
     @shorthands = config["shorthands"]
     @intervals = config["intervals"]

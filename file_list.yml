@@ -1,4 +1,5 @@
 ground_truth_extension: .lab
+audio_extension: .mp3
 choracle_extension: .mp3.out
 ground_truth_dir: ground_truth
 files:

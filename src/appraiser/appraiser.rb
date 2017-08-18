@@ -1,4 +1,5 @@
 require 'yaml'
+require 'fileutils'
 require File.expand_path("../../chord_matcher/chord_matcher.rb", __FILE__)
 
 class Appraiser
@@ -64,5 +65,10 @@ class Appraiser
       recall: recall,
       f_measure: f_measure
     }
+  end
+
+  def save_results(dir, filename)
+    FileUtils.mkdir_p(dir) unless File.directory?(dir)
+    File.open("#{dir}/#{filename}.yml", 'w') { |f| f.write results.to_yaml }
   end
 end
