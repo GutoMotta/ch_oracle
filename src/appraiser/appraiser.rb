@@ -8,7 +8,7 @@ class Appraiser
 
   def initialize(recognized_filename, ground_truth_filename)
     @matcher = ChordMatcher.new
-    @r_annotations = load_annotations(recognized_filename)
+    @c_annotations = load_annotations(recognized_filename)
     @g_annotations = load_annotations(ground_truth_filename)
 
     @true_positives, @false_positives, @false_negatives = count_matches
@@ -36,24 +36,27 @@ class Appraiser
 
   def count_matches
     tp = fn = fp = 0
-    r = g = 0
-    while r < @r_annotations.size && g < @g_annotations.size
-      on_r, off_r, label_r = @r_annotations[r]
+    c = g = 0
+    while c < @c_annotations.size && g < @g_annotations.size
+      on_c, off_c, label_c = @c_annotations[c]
       on_g, off_g, label_g = @g_annotations[g]
 
-      if chords_match(label_r, label_g)
-        tp += 1
-        # print "Matched! #{label_r}\t#{label_g}\n" if label_r != label_g
-      else
-        # print "DID NOT match: #{label_r}\t#{label_g}\n" if label_g != "N"
-        label_g == "N" ? (fp += 1) : (fn += 1)
+      if label_g != "N"
+        if chords_match(label_c, label_g)
+          tp += 1
+          # print "Matched! #{label_r}\t#{label_g}\n" if label_r != label_g
+        else
+          # print "DID NOT match: #{label_r}\t#{label_g}\n" if label_g != "N"
+          fn += 1
+          fp += 1
+        end
       end
 
-      if off_r == off_g
-        r += 1
+      if off_c == off_g
+        c += 1
         g += 1
-      elsif off_r < off_g
-        r += 1
+      elsif off_c < off_g
+        c += 1
       else
         g += 1
       end

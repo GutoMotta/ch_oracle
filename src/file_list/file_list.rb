@@ -37,7 +37,7 @@ class FileList
   def make_list(extension, dir)
     @files.map do |file|
       File.expand_path("../../../#{dir}/#{file}#{extension}", __FILE__)
-    end
+    end.sort
   end
 
   def create_dir!(dirname)
