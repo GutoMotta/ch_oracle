@@ -2,11 +2,11 @@ from __future__ import print_function
 import librosa
 import numpy as np
 import yaml
+import os
 import sys
 
 class ChOracle(object):
-    def __init__(self, filename, templates_filename="chord_templates.yml",
-                 threshold=0.2):
+    def __init__(self, filename, templates_filename, threshold=0.2):
         self.templates_filename = templates_filename
 
         self.threshold = threshold
@@ -14,8 +14,6 @@ class ChOracle(object):
         self.chord_names, self.chord_templates = self._load_chord_templates()
 
         self.x, self.sr = librosa.load(filename)
-
-        self.filename = filename.split("/")[-1]
 
         self.hop_length = 512
 
@@ -108,3 +106,5 @@ class ChOracle(object):
     #     # TODO porque esta vindo como string?
     #     # print(type(x[1][1]).__name__)
     #     return x
+
+ChOracle(sys.argv[2], sys.argv[1]).save_evaluation_file(sys.argv[3])

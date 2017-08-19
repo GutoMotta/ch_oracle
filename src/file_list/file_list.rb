@@ -17,6 +17,7 @@ class FileList
     @audio_files = make_list(@data["audio_extension"], "inputs")
 
     out = "outputs/#{output_dir}"
+    create_all_dirs!(File.expand_path("../../../#{out}", __FILE__))
     @recognized_files = make_list(@data["choracle_extension"], out)
 
     out = "outputs/#{@data["ground_truth_dir"]}"
@@ -26,9 +27,9 @@ class FileList
     raise "Something went wrong! Count recognized files" if sizes.uniq.size != 1
 
     out = "measures/#{output_dir}"
-    create_dir!(out)
     @measures_dir = File.expand_path("../../../#{out}", __FILE__)
-    @dirs.each { |dir| create_dir!("#{out}/#{dir}") }
+    create_all_dirs! @measures_dir
+
     @measure_files = make_list(".yml", out)
 
     @count = @recognized_files.size
@@ -43,5 +44,10 @@ class FileList
   def create_dir!(dirname)
     path = File.expand_path("../../../#{dirname}", __FILE__)
     FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+  end
+
+  def create_all_dirs!(dir)
+    create_dir!(dir)
+    @dirs.each { |d| create_dir!("#{dir}/#{d}") }
   end
 end
