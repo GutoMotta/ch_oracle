@@ -13,5 +13,5 @@ list.count.times do |i|
   input = list.audio_files[i]
   output = list.recognized_files[i]
 
-  system "ruby recognize_chords.rb #{templates} #{input} #{output}"
+  system "ruby recognize_chords.rb #{templates} '#{input}' '#{output}'"
 end
