@@ -17,7 +17,7 @@ class ChOracle(object):
 
         self.hop_length = 512
 
-        self.chroma = librosa.feature.chroma_stft(y=self.x, sr=self.sr,
+        self.chroma = librosa.feature.chroma_cqt(y=self.x, sr=self.sr,
                                                   hop_length=self.hop_length)
 
         labels = [self._match_feature(f) for f in np.transpose(self.chroma)]
