@@ -26,12 +26,6 @@ class ChOracle(object):
 
         self.labels, self.onsets, self.offsets = labels_onsets_offsets
 
-        # labels_times = self._compact_labels(labels)
-        # self.labels, self.onsets, self.offsets = self._threshold(*labels_times)
-
-        # tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
-        # beat_times = librosa.frames_to_time(beat_frames, sr=sr)
-
     def _load_chord_templates(self):
         templates_file = open(self.templates_filename)
         chords = yaml.load(templates_file)
@@ -72,39 +66,5 @@ class ChOracle(object):
 
             file.write("%f %f %s\n" % (onset, offset, label))
         file.close()
-
-    # def _compact_labels(self, labels):
-    #     new_labels = [labels[0]]
-    #     onsets = [0]
-    #     offsets = []
-
-    #     for i in range(1, len(labels)):
-    #         if labels[i] != labels[i - 1]:
-    #             new_labels.append(labels[i])
-    #             t = 1.0 * i * self.hop_length / self.sr
-    #             onsets.append(t)
-    #             offsets.append(t)
-    #     offsets.append(1.0 * len(labels) * self.hop_length / self.sr)
-
-    #     return (new_labels, onsets, offsets)
-
-    # def _threshold(self, labels, onsets, offsets):
-    #     new_labels = []
-    #     new_onsets = []
-    #     new_offsets = []
-
-    #     for i in range(0, len(onsets)):
-    #         if offsets[i] - onsets[i] > self.threshold:
-    #             new_labels.append(labels[i])
-    #             new_onsets.append(onsets[i])
-    #             new_offsets.append(offsets[i])
-
-    #     return (new_labels, new_onsets, new_offsets)
-
-    # def times_chords_annotations(self):
-    #     x = np.transpose([self.onsets, self.offsets, self.labels])
-    #     # TODO porque esta vindo como string?
-    #     # print(type(x[1][1]).__name__)
-    #     return x
 
 ChOracle(sys.argv[2], sys.argv[1]).save_evaluation_file(sys.argv[3])
