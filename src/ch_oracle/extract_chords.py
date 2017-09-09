@@ -1,4 +1,4 @@
-from ch_oracle.ch_oracle import ChOracle
+from ch_oracle import ChOracle
 import sys
 
 if len(sys.argv) > 4:
