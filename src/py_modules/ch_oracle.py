@@ -11,11 +11,11 @@ class ChOracle(object):
 
         self.chord_names, self.chord_templates = self._load_chord_templates()
 
-        self.x, self.sr = librosa.load(filename)
+        self.y, self.sr = librosa.load(filename)
 
         self.hop_length = 512
 
-        self.chroma = librosa.feature.chroma_stft(y=self.x, sr=self.sr,
+        self.chroma = librosa.feature.chroma_stft(y=self.y, sr=self.sr,
                                                   hop_length=self.hop_length)
 
         lbls = [self._match_feature(f) for f in np.transpose(self.chroma)]

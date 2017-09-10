@@ -1,6 +1,7 @@
 ground_truth_extension: .lab
 audio_extension: .mp3
-choracle_extension: .mp3.out
+recognized_extension: .mp3.out
+chroma_extension: .crmg
 ground_truth_dir: ground_truth
 files:
   01-please_please_me:

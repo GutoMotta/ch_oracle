@@ -14,11 +14,11 @@ class FileList
     end
     @files.flatten!.sort!
 
-    @audio_files = make_list(@data["audio_extension"], "inputs")
+    @audio_files = make_list(@data["audio_extension"], "audios")
 
     out = "outputs/#{output_dir}"
     create_all_dirs!(File.expand_path("../../../#{out}", __FILE__))
-    @recognized_files = make_list(@data["choracle_extension"], out)
+    @recognized_files = make_list(@data["recognized_extension"], out)
 
     out = "outputs/#{@data["ground_truth_dir"]}"
     @ground_truth_files = make_list(@data["ground_truth_extension"], out)

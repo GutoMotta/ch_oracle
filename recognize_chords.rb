@@ -8,4 +8,4 @@ output = args.shift
 threshold = args.shift
 
 args = "'#{templates}' '#{input}' '#{output}' #{threshold}"
-exec("python src/ch_oracle/extract_chords.py #{args}")
+exec("python src/py_modules/extract_chords.py #{args}")
