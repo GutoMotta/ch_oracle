@@ -10,14 +10,14 @@ hop_length = 512
 sr = 22050
 
 if len(sys.argv) < 3 or sys.argv[2] != "cqt":
-    chroma = librosa.feature.chroma_stft
+    chroma_function = librosa.feature.chroma_stft
 else:
-    chroma = librosa.feature.chroma_cqt
+    chroma_function = librosa.feature.chroma_cqt
 
 def extract_chroma(input_filename, output_filename):
     y, _ = librosa.load(input_filename, sr=sr)
     file = open(output_filename, "w")
-    chroma = np.transpose(chroma(y=y, sr=sr))
+    chroma = np.transpose(chroma_function(y=y, sr=sr))
     n = len(chroma)
     ons, offs = onsets_offsets(n)
     for i in range(0, n):
@@ -46,4 +46,5 @@ file_list = FileList(sys.argv[1])
 for i in range(0, file_list.size):
     audio_file = file_list.audio_files[i]
     chroma_file = file_list.chroma_files[i]
+    print audio_file.split("/")[-1]
     extract_chroma(audio_file, chroma_file)
