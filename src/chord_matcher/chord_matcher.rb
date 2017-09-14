@@ -1,4 +1,3 @@
-require File.expand_path("chord_inspector.rb", __FILE__)
 require 'yaml'
 
 class ChordMatcher
