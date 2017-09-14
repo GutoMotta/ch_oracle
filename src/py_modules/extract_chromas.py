@@ -9,7 +9,7 @@ from file_list import FileList
 hop_length = 512
 sr = 22050
 
-if len(sys.argv) < 2 or sys.argv[1] != "cqt":
+if len(sys.argv) < 3 or sys.argv[2] != "cqt":
     chroma = librosa.feature.chroma_stft
 else:
     chroma = librosa.feature.chroma_cqt
@@ -42,7 +42,7 @@ def onsets_offsets(n):
 
     return (onsets, offsets)
 
-file_list = FileList("tmp")
+file_list = FileList(sys.argv[1])
 for i in range(0, file_list.size):
     audio_file = file_list.audio_files[i]
     chroma_file = file_list.chroma_files[i]
