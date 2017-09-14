@@ -1,3 +1,4 @@
+require File.expand_path("chord_inspector.rb", __FILE__)
 require 'yaml'
 
 class ChordMatcher
@@ -10,6 +11,14 @@ class ChordMatcher
     @intervals = config["intervals"]
     pitches = %w(C C# D D# E F F# G G# A A# B)
     @pitch_index = 12.times.map { |i| [pitches[i], i] }.to_h
+  end
+
+  def reduce(chord)
+    pitch, nts = notes(chord)
+    %w(maj min dim aug).each do |s|
+      return "#{pitch}:#{s}" if notes.first(3) == @shorthands[s]
+    end
+    "N"
   end
 
   def compare(chord_a, chord_b)

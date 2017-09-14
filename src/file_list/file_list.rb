@@ -2,52 +2,60 @@ require "yaml"
 require "fileutils"
 
 class FileList
-  attr_reader :audio_files, :recognized_files, :ground_truth_files,
-              :measure_files, :measures_dir, :count
+  attr_reader :audio_files, :recognized_files, :gt_files,
+              :chroma_files, :measure_files, :measures_dir, :size
 
-  def initialize(output_dir, filelist=nil)
-    filelist ||= File.expand_path("../file_list.yml", __FILE__)
-    @data = YAML.load_file filelist
-    @dirs = @data["files"].keys.sort
-    @files = @dirs.map do |dir|
-      @data["files"][dir].sort.map { |file| "#{dir}/#{file}" }
+  def initialize(scope_directory, list_file_name=nil)
+    list_file_name ||= File.expand_path("../file_list.yml", __FILE__)
+    @data = YAML.load_file list_file_name
+
+    @audio_files      = create_list("audio")
+    @gt_files         = create_list("output", "ground_truth")
+    @chroma_files     = create_list("chroma", scope_directory)
+    @recognized_files = create_list("output", scope_directory)
+    @measure_files    = create_list("measure", scope_directory)
+
+    @size = @audio_files.size
+  end
+
+  def count
+    @size
+  end
+
+  def create_list(list_name, label=nil)
+    mkdir! "#{list_name}s"
+    mkdirs! dir_name("#{list_name}s", label)
+
+    extension_name = label == "ground_truth" ? "ground_truth" : list_name
+
+    files = @data["albuns"].map do |album, songs|
+      dir = dir_name("#{list_name}s", label, album)
+      songs.map { |song| file_path(dir, song, extension_name) }
     end
-    @files.flatten!.sort!
 
-    @audio_files = make_list(@data["audio_extension"], "audios")
-
-    out = "outputs/#{output_dir}"
-    create_all_dirs!(File.expand_path("../../../#{out}", __FILE__))
-    @recognized_files = make_list(@data["recognized_extension"], out)
-
-    out = "outputs/#{@data["ground_truth_dir"]}"
-    @ground_truth_files = make_list(@data["ground_truth_extension"], out)
-
-    sizes = [audio_files.size, recognized_files.size, ground_truth_files.size]
-    raise "Something went wrong! Count recognized files" if sizes.uniq.size != 1
-
-    out = "measures/#{output_dir}"
-    @measures_dir = File.expand_path("../../../#{out}", __FILE__)
-    create_all_dirs! @measures_dir
-
-    @measure_files = make_list(".yml", out)
-
-    @count = @recognized_files.size
+    files.flatten.sort
   end
 
-  def make_list(extension, dir)
-    @files.map do |file|
-      File.expand_path("../../../#{dir}/#{file}#{extension}", __FILE__)
-    end.sort
+  def mkdir!(dir)
+    path = spath(dir)
+    FileUtils.mkdir_p(path) unless File.directory?(path)
   end
 
-  def create_dir!(dirname)
-    path = File.expand_path("../../../#{dirname}", __FILE__)
-    FileUtils.mkdir_p(dirname) unless File.directory?(dirname)
+  def mkdirs!(dir)
+    mkdir!(dir)
+    @data["albuns"].each { |album, songs| mkdir!("#{dir}/#{album}") }
   end
 
-  def create_all_dirs!(dir)
-    create_dir!(dir)
-    @dirs.each { |d| create_dir!("#{dir}/#{d}") }
+  def dir_name(*items)
+    items.compact.join("/")
+  end
+
+  def file_path(dir, basename, extension_name)
+    ext = @data["extensions"][extension_name]
+    spath("#{dir}/#{basename}.#{ext}")
+  end
+
+  def spath(path)
+    File.expand_path("../../../#{path}", __FILE__)
   end
 end

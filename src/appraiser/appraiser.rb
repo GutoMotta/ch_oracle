@@ -1,8 +1,11 @@
 require 'yaml'
 require 'fileutils'
 require File.expand_path("../../chord_matcher/chord_matcher.rb", __FILE__)
+require File.expand_path("../../annotation_loop/annotation_loop.rb", __FILE__)
 
 class Appraiser
+  include AnnotationLoop
+
   attr_reader :true_positives, :false_positives, :false_negatives,
               :precision, :recall, :f_measure
 
@@ -36,11 +39,7 @@ class Appraiser
 
   def count_matches
     tp = fn = fp = 0
-    c = g = 0
-    while c < @c_annotations.size && g < @g_annotations.size
-      on_c, off_c, label_c = @c_annotations[c]
-      on_g, off_g, label_g = @g_annotations[g]
-
+    annotation_loop(@c_annotations, @g_annotations) do |label_c, label_g|
       if label_g != "N"
         if chords_match(label_c, label_g)
           tp += 1
@@ -50,15 +49,6 @@ class Appraiser
           fn += 1
           fp += 1
         end
-      end
-
-      if off_c == off_g
-        c += 1
-        g += 1
-      elsif off_c < off_g
-        c += 1
-      else
-        g += 1
       end
     end
     [tp, fp, fn]

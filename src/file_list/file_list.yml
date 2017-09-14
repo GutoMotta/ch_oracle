@@ -1,9 +1,10 @@
-ground_truth_extension: .lab
-audio_extension: .mp3
-recognized_extension: .mp3.out
-chroma_extension: .crmg
-ground_truth_dir: ground_truth
-files:
+extensions:
+  ground_truth: lab
+  audio: mp3
+  output: mp3.out
+  chroma: crmg
+  measure: yml
+albuns:
   01-please_please_me:
     - 01-i_saw_her_standing_there
     - 02-misery

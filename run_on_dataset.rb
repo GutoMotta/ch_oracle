@@ -2,12 +2,12 @@ require File.expand_path("../src/file_list/file_list.rb", __FILE__)
 
 args = ARGV.to_a
 
-raise "Missing args: <chords_templates> <recognition_id>" if args.size < 2
+raise "Missing args: <chords_templates> <scope_directory>" if args.size < 2
 
 templates = args.shift
-recognition_id = args.shift
+scope_directory = args.shift
 
-list = FileList.new(recognition_id)
+list = FileList.new(scope_directory)
 
 list.count.times do |i|
   input = list.audio_files[i]

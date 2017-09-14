@@ -8,10 +8,13 @@ class FileList(object):
         self.config = yaml.load(f)
         f.close()
 
-        self.audio_files = self.create_list("audio")
-        self.chroma_files = self.create_list("chroma", output_label)
+        self.audio_files      = self.create_list("audio")
+        self.gt_files         = self.create_list("output", "ground_truth")
+        self.chroma_files     = self.create_list("chroma", output_label)
+        self.recognized_files = self.create_list("output", output_label)
+        self.measure_files    = self.create_list("measure", output_label)
 
-        self.size = len(self.audio_files)
+        self.count = self.size = len(self.audio_files)
 
     def mkdir(self, dir_name):
         if not os.path.exists(dir_name):
@@ -19,13 +22,12 @@ class FileList(object):
         return dir_name
 
     def create_list(self, list_name, label=None):
-        file_paths = self.config["files"]
-        dirs = file_paths.keys()
+        albuns = self.config["albuns"]
         files = []
-        for album_dir in dirs:
-            dirname = self._dirname("%ss" % list_name, label, album_dir)
+        for album in albuns.keys():
+            dirname = self._dirname("%ss" % list_name, label, album)
             dirpath = self.mkdir(self._spath(dirname))
-            for basename in file_paths[album_dir]:
+            for basename in albuns[album]:
                 files.append(self._filename(dirpath, basename, list_name))
         files.sort()
 
@@ -39,5 +41,5 @@ class FileList(object):
         return "/".join(item for item in items if item is not None)
 
     def _filename(self, dirpath, basename, extension_name):
-        ext = self.config["%s_extension" % extension_name]
-        return "%s/%s%s" % (dirpath, basename, ext)
+        ext = self.config["extensions"][extension_name]
+        return "%s/%s.%s" % (dirpath, basename, ext)
