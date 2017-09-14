@@ -15,7 +15,7 @@ class ChordMatcher
   def reduce(chord)
     pitch, nts = notes(chord)
     %w(maj min dim aug).each do |s|
-      return "#{pitch}:#{s}" if notes.first(3) == @shorthands[s]
+      return "#{pitch}:#{s}" if nts.first(3) == @shorthands[s]
     end
     "N"
   end
@@ -27,6 +27,8 @@ class ChordMatcher
   end
 
   def notes(chord)
+    return [nil, []] if chord == "N"
+
     pitch = parse_pitch(chord)
     notes = parse_shorthand(chord)
     added_notes, removed_notes = parse_intervals(chord)
