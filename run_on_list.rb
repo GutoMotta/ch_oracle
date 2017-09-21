@@ -2,7 +2,7 @@ require File.expand_path("../src/file_list/file_list.rb", __FILE__)
 
 args = ARGV.to_a
 
-raise "Missing args: <chords_templates> <list_file> <scope_directory>" if args.size < 2
+raise "Missing args: <chords_templates> <list_file> <scope_directory>" if args.size < 3
 
 templates = args.shift
 file_list = args.shift
