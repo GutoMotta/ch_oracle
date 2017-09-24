@@ -12,9 +12,11 @@ files_indices = File.read(file_list).lines.map(&:to_i)
 
 list = FileList.new(scope_directory)
 
-files_indices.each do |i|
-  input = list.audio_files[i]
-  output = list.recognized_files[i]
+files_indices.each_with_index do |fi, i|
+  print "recognizing: #{(100.0 * i / files_indices.size).round(2)}%\n"
+
+  input = list.audio_files[fi]
+  output = list.recognized_files[fi]
 
   system "ruby recognize_chords.rb #{templates} '#{input}' '#{output}'"
 end

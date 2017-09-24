@@ -28,7 +28,7 @@ class ChordMatcher
   def compare(chord_a, chord_b)
     print "#{chord_a} \t #{chord_b}\n" if @debug
     return false if chord_a == "N" || chord_b == "N"
-    notes(chord_a) == notes(chord_b)
+    [notes(chord_a), notes(chord_b)].transpose.map { |a, b| a <= b }.all?
   end
 
   def notes(chord)

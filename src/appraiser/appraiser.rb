@@ -34,7 +34,7 @@ class Appraiser
   end
 
   def chords_match(label_a, label_b)
-    @matcher.compare label_a, label_b
+    @matcher.compare(label_a, label_b)
   end
 
   def count_matches
@@ -43,9 +43,9 @@ class Appraiser
       if label_g != "N"
         if chords_match(label_c, label_g)
           tp += 1
-          # print "Matched! #{label_r}\t#{label_g}\n" if label_r != label_g
+          log_match(label_c, label_g)
         else
-          # print "DID NOT match: #{label_r}\t#{label_g}\n" if label_g != "N"
+          log_not_match(label_c, label_g)
           fn += 1
           fp += 1
         end
@@ -67,5 +67,15 @@ class Appraiser
 
   def save_results(filename)
     File.open("#{filename}", 'w') { |f| f.write results.to_yaml }
+  end
+
+  def log_match(label_c, label_g)
+    path = File.expand_path("../../../matched_chords.log", __FILE__)
+    File.open(path, "a") { |f| f << "#{label_c} #{label_g}\n" }
+  end
+
+  def log_not_match(label_c, label_g)
+    path = File.expand_path("../../../not_matched_chords.log", __FILE__)
+    File.open(path, "a") { |f| f << "#{label_c} #{label_g}\n" }
   end
 end

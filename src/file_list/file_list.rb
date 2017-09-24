@@ -3,11 +3,14 @@ require "fileutils"
 
 class FileList
   attr_reader :audio_files, :recognized_files, :gt_files,
-              :chroma_files, :measure_files, :measures_dir, :size
+              :chroma_files, :measure_files, :size
+
 
   def initialize(scope_directory, list_file_name=nil)
     list_file_name ||= File.expand_path("../file_list.yml", __FILE__)
     @data = YAML.load_file list_file_name
+
+    @dirs = {}
 
     @audio_files      = create_list("audio")
     @gt_files         = create_list("output", "ground_truth")
@@ -22,12 +25,17 @@ class FileList
     @size
   end
 
+  def measures_dir
+    @dirs["measure"]
+  end
+
   def create_list(list_name, label=nil)
     mkdir! "#{list_name}s"
     mkdirs! dir_name("#{list_name}s", label)
 
     extension_name = label == "ground_truth" ? "ground_truth" : list_name
 
+    @dirs[list_name] = dir_name("#{list_name}s", label)
     files = @data["albuns"].map do |album, songs|
       dir = dir_name("#{list_name}s", label, album)
       songs.map { |song| file_path(dir, song, extension_name) }

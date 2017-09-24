@@ -73,6 +73,6 @@ File.open("templates_#{directory_scope}.yml", "w") do |file|
   end
 end
 
-File.open("templates_test_files.csv", "w") do |file|
+File.open("templates_#{directory_scope}_files.csv", "w") do |file|
   test_indices.each { |i| file << "#{i}\n" }
 end
