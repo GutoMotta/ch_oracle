@@ -38,16 +38,21 @@ class Appraiser
   end
 
   def count_matches
-    tp = fn = fp = 0
+    tp = tn = fn = fp = 0
     annotation_loop(@c_annotations, @g_annotations) do |label_c, label_g|
-      if label_g != "N"
-        if chords_match(label_c, label_g)
-          tp += 1
-          log_match(label_c, label_g)
+      if label_c == "N" # negatives
+        if label_g == "N"
+          tn += 1
         else
-          log_not_match(label_c, label_g)
           fn += 1
-          fp += 1
+        end
+      else # positives
+        if label_g != "N"
+          if chords_match(label_c, label_g)
+            tp += 1
+          else
+            fp += 1
+          end
         end
       end
     end
@@ -67,15 +72,5 @@ class Appraiser
 
   def save_results(filename)
     File.open("#{filename}", 'w') { |f| f.write results.to_yaml }
-  end
-
-  def log_match(label_c, label_g)
-    path = File.expand_path("../../../matched_chords.log", __FILE__)
-    File.open(path, "a") { |f| f << "#{label_c} #{label_g}\n" }
-  end
-
-  def log_not_match(label_c, label_g)
-    path = File.expand_path("../../../not_matched_chords.log", __FILE__)
-    File.open(path, "a") { |f| f << "#{label_c} #{label_g}\n" }
   end
 end

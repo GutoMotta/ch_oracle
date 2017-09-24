@@ -6,7 +6,7 @@ require File.expand_path("../../annotation_loop/annotation_loop.rb", __FILE__)
 
 include AnnotationLoop
 
-directory_scope = ARGV[0] || "tmp"
+directory_scope = "stft", "cqt"
 
 def read_chroma_file(path)
   lines = file_lines(path)
@@ -28,35 +28,6 @@ def file_lines(filename)
   File.read(filename).lines.map(&:strip)
 end
 
-file_list = FileList.new(directory_scope)
-n = file_list.size
-
-normalizer = ChordMatcher.new
-
-chord_arrays = Hash.new { |h, k| h[k] = [] }
-
-train_indices = n.times.to_a
-test_indices = []
-(n / 4).times do
-  test_indices << train_indices.delete_at(rand(train_indices.size))
-end
-
-train_indices.each_with_index do |t, i|
-  print "#{(100.0 * i / train_indices.size).round(2)}%\n"
-  ann_chroma = read_chroma_file(file_list.chroma_files[t])
-  ann_gt = read_gt_file(file_list.gt_files[t])
-
-  annotation_loop(ann_gt, ann_chroma) do |chord, chroma|
-    chord_arrays[normalizer.normalize(chord) || chord] << chroma
-  end
-end
-
-filtered = chord_arrays.select { |chord, array|
-  %w(C C:min C# C#:min D D:min D# D#:min
-     E E:min F F:min F# F#:min  G  G:min
-     G# G#:min A A:min A# A#:min B B:min).include? chord
-}
-
 def avg(arrays)
   n = arrays.size
   sum = arrays.inject(Array.new(12, 0)) do |accumulated, next_array|
@@ -65,14 +36,54 @@ def avg(arrays)
   sum.map { |e| 1.0 * e / n }
 end
 
-templates = filtered.map { |chord, arrays| [chord, avg(arrays)] }
+normalizer = ChordMatcher.new
+file_list = []
 
-File.open("templates_#{directory_scope}.yml", "w") do |file|
-  templates.each do |chord, template|
-    file << "\"#{chord}\": #{template}\n"
-  end
+directory_scope.each_with_index do |scope, scopei|
+  file_list = 4.times.map { |i| FileList.new("#{scope}f#{i + 1}") }
+end
+n = file_list[0].size
+all_indices = n.times.to_a
+subset = 4.times.map { [] }
+n.times do |i|
+  subset[i % 4] << all_indices.delete_at(rand(all_indices.size))
 end
 
-File.open("templates_#{directory_scope}_files.csv", "w") do |file|
-  test_indices.each { |i| file << "#{i}\n" }
+directory_scope.each_with_index do |scope, scopei|
+  4.times do |fold|
+    template_label = "#{scope}f#{fold + 1}"
+
+    chord_arrays = Hash.new { |h, k| h[k] = [] }
+    test_indices = subset[fold]
+    train_indices = n.times.to_a - test_indices
+
+    train_indices.each_with_index do |t, i|
+      print "#{(12.5 * (scopei + 1) * (fold + 1) * i / train_indices.size).round(2)}%\n"
+
+      ann_chroma = read_chroma_file(file_list[fold].chroma_files[t])
+      ann_gt = read_gt_file(file_list[fold].gt_files[t])
+
+      annotation_loop(ann_gt, ann_chroma) do |chord, chroma|
+        chord_arrays[normalizer.normalize(chord) || chord] << chroma
+      end
+    end
+
+    filtered = chord_arrays.select { |chord, array|
+      %w(C C:min C# C#:min D D:min D# D#:min
+         E E:min F F:min F# F#:min  G  G:min
+         G# G#:min A A:min A# A#:min B B:min).include? chord
+    }
+
+    templates = filtered.map { |chord, arrays| [chord, avg(arrays)] }
+
+    File.open("templates_#{template_label}.yml", "w") do |file|
+      templates.each do |chord, template|
+        file << "\"#{chord}\": #{template}\n"
+      end
+    end
+
+    File.open("templates_#{template_label}_files.csv", "w") do |file|
+      test_indices.each { |i| file << "#{i}\n" }
+    end
+  end
 end

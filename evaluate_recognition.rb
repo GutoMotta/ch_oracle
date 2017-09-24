@@ -41,6 +41,7 @@ def overall(array)
   {
     "avg" => avg(array),
     "stdev" => stdev(array),
+    "n" => array.size,
     "box_plot_points" => box_plot_points(array)
   }
 end

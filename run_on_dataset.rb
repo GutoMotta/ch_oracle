@@ -10,6 +10,8 @@ scope_directory = args.shift
 list = FileList.new(scope_directory)
 
 list.count.times do |i|
+  print "recognizing: #{(100.0 * i / list.count).round(2)}%\n"
+
   input = list.audio_files[i]
   output = list.recognized_files[i]
 
