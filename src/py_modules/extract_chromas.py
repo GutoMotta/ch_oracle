@@ -17,7 +17,7 @@ else:
 def extract_chroma(input_filename, output_filename):
     y, _ = librosa.load(input_filename, sr=sr)
     file = open(output_filename, "w")
-    chroma = np.transpose(chroma_function(y=y, sr=sr))
+    chroma = np.transpose(chroma_function(y=y, sr=sr, norm=2))
     n = len(chroma)
     ons, offs = onsets_offsets(n)
     for i in range(0, n):
