@@ -4,3 +4,4 @@ outputs/*
 !outputs/ground_truth/
 measures/*
 *.log
+figs/*
