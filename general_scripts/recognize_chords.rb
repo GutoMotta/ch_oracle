@@ -2,7 +2,7 @@ args = ARGV.to_a
 
 raise "Missing args: <templates> <input> <output>" if args.size < 3
 
-templates = File.expand_path("../#{args.shift}", __FILE__)
+templates = File.expand_path("../../#{args.shift}", __FILE__)
 input = args.shift
 output = args.shift
 threshold = args.shift

@@ -1,4 +1,4 @@
-require File.expand_path("../src/file_list/file_list.rb", __FILE__)
+require File.expand_path("../../src/file_list/file_list.rb", __FILE__)
 require "yaml"
 
 args = ARGV.to_a
@@ -43,7 +43,7 @@ output_file_list = FileList.new(output_dir)
 n = output_file_list.size
 
 n.times do |i|
-  print "#{(100.0 * i / n).round(1)} %\n"
+  print "#{output_dir} => #{(100.0 * i / n).round(1)} %\n"
 
   next unless run_on_index[i]
 

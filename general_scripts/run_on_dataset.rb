@@ -1,4 +1,4 @@
-require File.expand_path("../src/file_list/file_list.rb", __FILE__)
+require File.expand_path("../../src/file_list/file_list.rb", __FILE__)
 
 args = ARGV.to_a
 

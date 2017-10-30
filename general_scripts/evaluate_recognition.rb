@@ -1,6 +1,6 @@
 require "yaml"
-require File.expand_path("../src/appraiser/appraiser.rb", __FILE__)
-require File.expand_path("../src/file_list/file_list.rb", __FILE__)
+require File.expand_path("../../src/appraiser/appraiser.rb", __FILE__)
+require File.expand_path("../../src/file_list/file_list.rb", __FILE__)
 
 def avg(array)
   1.0 * array.inject(:+) / array.size
