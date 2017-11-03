@@ -30,7 +30,6 @@ results = dirs.map do |dir|
 end
 
 results.compact!.sort_by! { |name, avg, min, max| -avg }
-
 labels = %w(avg min max)
 
 results.each do |result|

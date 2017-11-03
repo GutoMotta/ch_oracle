@@ -1,31 +1,34 @@
 #!/bin/bash
+#
+#
+# ruby scripts/output_from_chromas.rb -c chromas_power_1_instead_of_2
+#   -t templates_binary.yml -o chromas_power_1_instead_of_2 -f
+
 set -o xtrace
 
-ruby output_from_chromas.rb cqt_n2 templates_binary.yml   binary_dcqt &
-ruby output_from_chromas.rb cqt_n2 templates_cqt_n2f1.yml cqt_d2f1 templates_cqt_n2f1_files.csv &
-ruby output_from_chromas.rb cqt_n2 templates_cqt_n2f2.yml cqt_d2f2 templates_cqt_n2f2_files.csv &
-ruby output_from_chromas.rb cqt_n2 templates_cqt_n2f3.yml cqt_d2f3 templates_cqt_n2f3_files.csv &
-ruby output_from_chromas.rb cqt_n2 templates_cqt_n2f4.yml cqt_d2f4 templates_cqt_n2f4_files.csv &
+ruby scripts/output_from_chromas.rb -c stft -t templates/templates_stftf1.yml -l templates/templates_stftf1_files.csv -o stft_fold1_filtering -f &
+ruby scripts/output_from_chromas.rb -c stft -t templates/templates_stftf2.yml -l templates/templates_stftf2_files.csv -o stft_fold2_filtering -f &
+ruby scripts/output_from_chromas.rb -c stft -t templates/templates_stftf3.yml -l templates/templates_stftf3_files.csv -o stft_fold3_filtering -f &
+ruby scripts/output_from_chromas.rb -c stft -t templates/templates_stftf4.yml -l templates/templates_stftf4_files.csv -o stft_fold4_filtering -f &
 
-ruby output_from_chromas.rb stft_n2 templates_binary.yml    binary_dstft &
-ruby output_from_chromas.rb stft_n2 templates_stft_n2f1.yml stft_d2f1 templates_stft_n2f1_files.csv &
-ruby output_from_chromas.rb stft_n2 templates_stft_n2f2.yml stft_d2f2 templates_stft_n2f2_files.csv &
-ruby output_from_chromas.rb stft_n2 templates_stft_n2f3.yml stft_d2f3 templates_stft_n2f3_files.csv &
-ruby output_from_chromas.rb stft_n2 templates_stft_n2f4.yml stft_d2f4 templates_stft_n2f4_files.csv &
+ruby scripts/output_from_chromas.rb -c cqt -t templates/templates_cqtf1.yml -o cqt_fold1_filtering -f &
+ruby scripts/output_from_chromas.rb -c cqt -t templates/templates_cqtf2.yml -o cqt_fold2_filtering -f &
+ruby scripts/output_from_chromas.rb -c cqt -t templates/templates_cqtf3.yml -o cqt_fold3_filtering -f &
+ruby scripts/output_from_chromas.rb -c cqt -t templates/templates_cqtf4.yml -o cqt_fold4_filtering -f &
 
 wait
 
-ruby evaluate_recognition.rb binary_dcqt &
-ruby evaluate_recognition.rb cqt_d2f1 &
-ruby evaluate_recognition.rb cqt_d2f2 &
-ruby evaluate_recognition.rb cqt_d2f3 &
-ruby evaluate_recognition.rb cqt_d2f4 &
+ruby scripts/evaluate_recognition.rb chromas_power_1_instead_of_2 &
 
-ruby evaluate_recognition.rb binary_dstft &
-ruby evaluate_recognition.rb stft_d2f1 &
-ruby evaluate_recognition.rb stft_d2f2 &
-ruby evaluate_recognition.rb stft_d2f3 &
-ruby evaluate_recognition.rb stft_d2f4 &
+ruby scripts/evaluate_recognition.rb stft_fold1_filtering &
+ruby scripts/evaluate_recognition.rb stft_fold2_filtering &
+ruby scripts/evaluate_recognition.rb stft_fold3_filtering &
+ruby scripts/evaluate_recognition.rb stft_fold4_filtering &
+
+ruby scripts/evaluate_recognition.rb cqt_fold1_filtering &
+ruby scripts/evaluate_recognition.rb cqt_fold2_filtering &
+ruby scripts/evaluate_recognition.rb cqt_fold3_filtering &
+ruby scripts/evaluate_recognition.rb cqt_fold4_filtering &
 
 wait
 

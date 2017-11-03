@@ -23,7 +23,9 @@ experiments = ["binary_dcqt", "binary_dstft"]
 results = [[exp, results_for(exp)] for exp in experiments]
 
 results += [best_result_in(["cqt_d2f1", "cqt_d2f2", "cqt_d2f3", "cqt_d2f4"]),
-            best_result_in(["stft_d2f1", "stft_d2f2", "stft_d2f3", "stft_d2f4"])]
+            best_result_in(["stft_d2f1", "stft_d2f2", "stft_d2f3", "stft_d2f4"]),
+            best_result_in(["cqt_fold1_filtering", "cqt_fold2_filtering", "cqt_fold3_filtering", "cqt_fold4_filtering"]),
+            best_result_in(["stft_fold1_filtering", "stft_fold2_filtering", "stft_fold3_filtering", "stft_fold4_filtering"])]
 
 results = list(reversed(sorted(results, key=lambda l:l[1])))
 
