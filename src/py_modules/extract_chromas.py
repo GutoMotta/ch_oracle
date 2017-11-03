@@ -9,15 +9,17 @@ from file_list import FileList
 hop_length = 512
 sr = 22050
 
-if len(sys.argv) < 3 or sys.argv[2] != "cqt":
-    chroma_function = librosa.feature.chroma_stft
-else:
-    chroma_function = librosa.feature.chroma_cqt
-
 def extract_chroma(input_filename, output_filename):
     y, _ = librosa.load(input_filename, sr=sr)
     file = open(output_filename, "w")
-    chroma = np.transpose(chroma_function(y=y, sr=sr, norm=2))
+
+    if len(sys.argv) < 3 or sys.argv[2] != "cqt":
+        S, _ = librosa.spectrum._spectrogram(y=y)
+        chroma = librosa.feature.chroma_stft(S=S, sr=sr, norm=2)
+    else:
+        chroma = librosa.feature.chroma_cqt(y=y, sr=sr, norm=2)
+
+    chroma = np.transpose(chroma)
     n = len(chroma)
     ons, offs = onsets_offsets(n)
     for i in range(0, n):

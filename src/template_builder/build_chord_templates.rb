@@ -6,12 +6,15 @@ require File.expand_path("../../annotation_loop/annotation_loop.rb", __FILE__)
 
 include AnnotationLoop
 
+if ARGV[0].nil?
+  puts "choose a directory_scope"
+  exit
+end
 
 # USAGE
 #   set experiment labels on directory_scope and then create directories under
 #   chroma/ named dir_name{f1,f2,f3,f4} with all chromas for building templates
-directory_scope = "stft_n2", "cqt_n2"
-print "remember, the directory_scope's are hard-coded: #{directory_scope}\n"
+directory_scope = [ARGV[0]]
 
 def read_chroma_file(path)
   lines = file_lines(path)
