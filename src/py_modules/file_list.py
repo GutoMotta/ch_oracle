@@ -9,10 +9,7 @@ class FileList(object):
         f.close()
 
         self.audio_files      = self.create_list("audio")
-        self.gt_files         = self.create_list("output", "ground_truth")
         self.chroma_files     = self.create_list("chroma", output_label)
-        self.recognized_files = self.create_list("output", output_label)
-        self.measure_files    = self.create_list("measure", output_label)
 
         self.count = self.size = len(self.audio_files)
 

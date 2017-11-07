@@ -37,6 +37,6 @@ results.each do |result|
     "#{label}: #{sprintf('%.2f', result[i + 1]).rjust(5, ' ')}"
   end.join("\t")
 
-  puts "#{result[0].to_s.rjust(30, ' ')}\t\t#{result_str}\n\n"
+  puts "#{result[0].to_s.rjust(40, ' ')}\t\t#{result_str}\n\n"
 end
 
