@@ -24,7 +24,7 @@ class Experiment
   end
 
   def description
-    <<~TXT
+    @description ||= <<~TXT
       Chord Recognition experiment with the following parameters:
 
       \tchroma_algorithm     => #{@chroma_algorithm}
@@ -38,11 +38,11 @@ class Experiment
   end
 
   def results
-    already_ran? ? load_results : run
+    @results ||= already_ran? ? load_results : run
   end
 
   def directory
-    File.expand_path("../../experiments/#{id}", __FILE__)
+    @directory ||= File.expand_path("../../experiments/#{id}", __FILE__)
   end
 
   private
