@@ -1,7 +1,6 @@
-audios
-chromas
-outputs/*
-!outputs/ground_truth/
-measures/*
 *.log
+audios/*
+chromas/*
 figs/*
+experiments/*
+
