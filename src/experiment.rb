@@ -1,4 +1,4 @@
-require "yaml"
+require File.expand_path("../chors.rb", __FILE__)
 
 class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
