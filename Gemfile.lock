@@ -1,12 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    byebug (9.1.0)
     pycall (1.0.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  byebug
   pycall
 
 BUNDLED WITH
