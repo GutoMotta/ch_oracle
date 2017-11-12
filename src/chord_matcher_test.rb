@@ -1,4 +1,4 @@
-require File.expand_path("../chord_matcher.rb", __FILE__)
+require File.expand_path("../chors.rb", __FILE__)
 
 @matcher = ChordMatcher.new
 
