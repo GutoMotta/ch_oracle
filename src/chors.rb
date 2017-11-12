@@ -1,5 +1,6 @@
 require 'byebug'
 require 'fileutils'
+require 'matrix'
 require 'set'
 require 'yaml'
 

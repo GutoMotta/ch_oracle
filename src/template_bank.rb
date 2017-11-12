@@ -5,7 +5,7 @@ class TemplateBank
   FOLDS = 4
 
   def initialize(binary: true, chromas_norm: 2,
-                 norm: false, chroma_algorithm: :stft)
+                 norm: 2, chroma_algorithm: :stft)
     @binary = binary
     @folds = binary ? 1 : FOLDS
     @chromas_norm = chromas_norm
@@ -15,7 +15,7 @@ class TemplateBank
 
   def name
     return :bin if @binary
-    "#{@chroma_algorithm}_#{@chromas_norm}_#{@norm}"
+    "#{@chroma_algorithm}-#{@chromas_norm}-#{@norm}"
   end
 
   def best_match(chroma, fold: 0)
@@ -112,14 +112,10 @@ class TemplateBank
   end
 
   def learn_templates
-    chord_normalizer = ChordMatcher.new
-
     all_folds = @folds.times.to_a
 
-    average_chromas = Hash.new do |hash, key|
-      hash[key] = Hash.new do |internal_hash, internal_key|
-        internal_hash[internal_key] = { acc: Array.new(12, 0), divide_by: 0 }
-      end
+    average_chromas = Hash.new do |h, k|
+      h[k] = Hash.new { |h2, k2| h2[k2] = Array.new(12, 0) }
     end
 
     songs_by_fold.each_with_index do |songs, fold_to_skip|
@@ -134,16 +130,7 @@ class TemplateBank
         chords = song.ground_truth
 
         (all_folds - [fold_to_skip]).each do |fold|
-          annotation_loop(chords, chromas) do |chord, chroma, duration|
-            if normalized_chord = chord_normalizer.normalize(chord)
-              acc = average_chromas[fold][normalized_chord][:acc]
-
-              new_acc = acc.zip(chroma).map(&:sum)
-
-              average_chromas[fold][normalized_chord][:acc] = new_acc
-              average_chromas[fold][normalized_chord][:divide_by] += duration
-            end
-          end
+          accumulate_chords_chromas(chords, chromas, average_chromas, fold)
         end
 
         percent = (100.0 * song_i / songs.size).round(2)
@@ -159,13 +146,33 @@ class TemplateBank
   def divide_accumulated_chromas(accumulated_chromas_hash)
     accumulated_chromas_hash.map do |fold, chords_chromas|
       templates = chords_chromas.map do |chord, chroma|
-        accumulated = chroma[:acc]
-        divide_by = chroma[:divide_by]
+        accumulated = Vector[*chroma]
 
-        [chord, accumulated.map { |value| value / divide_by }]
+        norm =
+          case @norm
+          when 2 then accumulated.norm
+          when :inf then accumulated.max
+          end
+
+        accumulated = (accumulated / norm).to_a
+
+        [chord, accumulated]
       end
 
       templates.to_h
+    end
+  end
+
+  def accumulate_chords_chromas(chords, chromas, average_chromas, fold)
+    @chord_normalizer ||= ChordMatcher.new
+
+    annotation_loop(chords, chromas) do |chord, chroma, duration|
+      normalized_chord = @chord_normalizer.normalize(chord)
+
+      if normalized_chord
+        acc = average_chromas[fold][normalized_chord].zip(chroma).map(&:sum)
+        average_chromas[fold][normalized_chord] = acc
+      end
     end
   end
 

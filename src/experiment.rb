@@ -1,7 +1,7 @@
 class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
                  templates_norm: nil, normalize_chromas: :inf,
-                 smooth_frames: 0, post_filtering: false, verbose: true)
+                 smooth_chromas: 0, post_filtering: false, verbose: true)
     @templates = TemplateBank.new(
       binary: templates == :bin,
       chroma_algorithm: chroma_algorithm,
@@ -10,7 +10,7 @@ class Experiment
 
     @chroma_algorithm = chroma_algorithm
     @normalize_chromas = normalize_chromas
-    @smooth_frames = smooth_frames
+    @smooth_chromas = smooth_chromas
     @post_filtering = post_filtering
 
     @verbose = verbose
@@ -22,7 +22,7 @@ class Experiment
       @templates.name,
       @templates.norm,
       @normalize_chromas,
-      @smooth_frames,
+      @smooth_chromas,
       @post_filtering
     ].map { |attribute| attribute || "nil" }.join("_")
   end
@@ -32,10 +32,10 @@ class Experiment
       Chord Recognition experiment with the following parameters:
 
       \tchroma_algorithm     => #{@chroma_algorithm}
-      \ttemplates            => #{@templates}
+      \ttemplates            => #{@templates.name}
       \ttemplates_norm       => #{@templates_norm}
       \tnormalize_chromas    => #{@normalize_chromas}
-      \tsmooth_frames        => #{@smooth_frames}
+      \tsmooth_chromas       => #{@smooth_chromas}
       \tpost_filtering       => #{@post_filtering}
 
     TXT
@@ -55,7 +55,7 @@ class Experiment
       {
         chroma_algorithm: @chroma_algorithm,
         normalize_chromas: @normalize_chromas,
-        smooth_frames: @smooth_frames,
+        smooth_chromas: @smooth_chromas,
         post_filtering: @post_filtering
       }
     ]

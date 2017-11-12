@@ -1,5 +1,5 @@
 class Chroma
-  attr_reader :on, :off, :feature
+  attr_accessor :on, :off, :feature
 
   def self.parse(line)
     on, off, feature = line.split(' ')

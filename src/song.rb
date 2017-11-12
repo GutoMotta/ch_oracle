@@ -42,13 +42,13 @@ class Song
   end
 
   def chords(templates, chroma_algorithm: nil, normalize_chromas: nil,
-             smooth_frames: nil, post_filtering: nil)
+             smooth_chromas: nil, post_filtering: nil)
     prefix = [
       chroma_algorithm,
       templates.name,
       templates.norm,
       normalize_chromas,
-      smooth_frames,
+      smooth_chromas,
       post_filtering
     ].map { |attribute| attribute || "nil" }.join("_")
 
@@ -56,11 +56,11 @@ class Song
 
     return file.data if file.exists?
 
-    # smooth_frames if @smooth_frames
-
     song_fold = templates.song_fold self
 
     chromas = chromagram(chroma_algorithm: chroma_algorithm)
+
+    chromas = smooth(chromas, smooth_chromas)
 
     chords = chromas.map do |chroma|
       chord = templates.best_match chroma, fold: song_fold
@@ -70,6 +70,25 @@ class Song
     file.write chords
 
     chords
+  end
+
+  def smooth(chromas, k=5)
+    return chromas if k == 0
+
+    number_of_chromas = chromas.size
+    chromas.each_with_index do |chroma, i|
+      from = [i - k, 0].max
+      to = [i + k, number_of_chromas - 1].min
+
+      chroma.feature = chromas_features_average(chromas[from..to])
+    end
+  end
+
+  def chromas_features_average(chromas)
+    n = chromas.size
+    chromas.map(&:feature).transpose.map do |note_intensities|
+      note_intensities.sum.to_f / n
+    end
   end
 
   def evaluation(experiment)
