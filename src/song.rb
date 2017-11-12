@@ -35,29 +35,53 @@ class Song
     @audio ||= ChorsFile.new(self, kind: :audio)
   end
 
-  def chromagram(chroma_kind: :stft, norm: 2)
-    Chromagram.chromas(self, chroma_kind: chroma_kind, norm: norm)
+  def chromagram(chroma_algorithm: :stft, norm: 2)
+    Chromagram.chromas(self, chroma_algorithm: chroma_algorithm, norm: norm)
   end
 
   def ground_truth
-    @ground_truth_file ||= ChorsFile.new(self, kind: :audio)
-
-    @ground_truth ||= @ground_truth_file.read.lines.map do |line|
-      on, off, chord = line.strip
-      [on.to_f, off.to_f, chord]
-    end
+    @ground_truth ||= Annotation.new(self, kind: :ground_truth).data
   end
 
-  def chords(binary_templates: true)
-    templates = TemplateBank.new(binary: binary_templates)
+  def chords(templates, chroma_algorithm: nil, normalize_chromas: nil,
+             smooth_frames: nil, post_filtering: nil)
+    prefix = [
+      chroma_algorithm,
+      templates.name,
+      templates.normalize?,
+      normalize_chromas,
+      smooth_frames,
+      post_filtering
+    ].map { |attribute| attribute || "nil" }.join("_")
 
-    chromagram.map do |chroma|
-      chord = templates.best_match chroma
-      [chroma.on, chroma.off, chord]
-    end
+    file = Annotation.new(self, kind: :chords, prefix: prefix)
+
+    return file.data if file.exists?
 
     # smooth_frames if @smooth_frames
 
-    # classify_chords_in_frames
+    song_fold = templates.song_fold self
+
+    chromas = chromagram(chroma_algorithm: chroma_algorithm)
+
+    chords = chromas.map do |chroma|
+      chord = templates.best_match chroma, fold: song_fold
+      [chroma.on, chroma.off, chord]
+    end
+
+    file.write chords
+
+    chords
+  end
+
+  def evaluation(experiment)
+    file = ChorsFile.new(self, kind: :experiment, prefix: experiment.id)
+
+    return YAML.load(file.read) if file.exists?
+
+    chords = chords(*experiment.recognition_params)
+    evaluation = Evaluation.new(chords, ground_truth)
+    file.write evaluation.results.to_yaml
+    evaluation.results
   end
 end

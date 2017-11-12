@@ -1,4 +1,4 @@
-require 'yaml'
+require File.expand_path("../chors.rb", __FILE__)
 
 class ChordMatcher
   def initialize(config_file=nil, debug: false)

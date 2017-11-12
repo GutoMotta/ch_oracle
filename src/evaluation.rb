@@ -1,18 +1,16 @@
-require 'yaml'
-require 'fileutils'
-require File.expand_path("../../chord_matcher/chord_matcher.rb", __FILE__)
-require File.expand_path("../../annotation_loop/annotation_loop.rb", __FILE__)
+require File.expand_path("../chors.rb", __FILE__)
 
-class Appraiser
+class Evaluation
   include AnnotationLoop
 
   attr_reader :true_positives, :false_positives, :false_negatives,
               :precision, :recall, :f_measure
 
-  def initialize(recognized_filename, ground_truth_filename)
+  def initialize(recognition_annotations, ground_truth_annotations)
     @matcher = ChordMatcher.new
-    @c_annotations = load_annotations(recognized_filename)
-    @g_annotations = load_annotations(ground_truth_filename)
+
+    @r_annotations = recognition_annotations
+    @g_annotations = ground_truth_annotations
 
     @true_positives, @false_positives, @false_negatives = count_matches
 
@@ -26,36 +24,32 @@ class Appraiser
     end
   end
 
-  def load_annotations(file)
-    File.readlines(file).map { |s|
-      on, off, label = s.strip.split(" ")
-      [on.to_f, off.to_f, label]
-    }
-  end
-
   def chords_match(label_a, label_b)
     @matcher.compare(label_a, label_b)
   end
 
   def count_matches
     tp = tn = fn = fp = 0
-    annotation_loop(@c_annotations, @g_annotations) do |label_c, label_g|
-      if label_c == "N" # negatives
-        if label_g == "N"
-          tn += 1
+
+    annotations = @r_annotations, @g_annotations
+    annotation_loop(*annotations) do |r_label, g_label, duration|
+      if r_label == "N" # negatives
+        if g_label == "N"
+          tn += duration
         else
-          fn += 1
+          fn += duration
         end
       else # positives
-        if label_g != "N"
-          if chords_match(label_c, label_g)
-            tp += 1
+        if g_label != "N"
+          if chords_match(r_label, g_label)
+            tp += duration
           else
-            fp += 1
+            fp += duration
           end
         end
       end
     end
+
     [tp, fp, fn]
   end
 
@@ -68,9 +62,5 @@ class Appraiser
       "recall" => recall,
       "f_measure" => f_measure
     }
-  end
-
-  def save_results(filename)
-    File.open("#{filename}", 'w') { |f| f.write results.to_yaml }
   end
 end

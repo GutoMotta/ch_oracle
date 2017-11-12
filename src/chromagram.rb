@@ -3,20 +3,20 @@ require File.expand_path("../chors.rb", __FILE__)
 class Chromagram < ChorsFile
   HOP_LENGTH = 512
 
-  def self.chromas(song, chroma_kind: :stft, norm: 2)
-    new(song, chroma_kind, norm).chromas
+  def self.chromas(song, chroma_algorithm: :stft, norm: 2)
+    new(song, chroma_algorithm, norm).chromas
   end
 
-  def initialize(song, chroma_kind, norm)
-    unless %i(stft cqt).include?(chroma_kind)
-      raise "invalid chroma chroma_kind: #{chroma_kind}"
+  def initialize(song, chroma_algorithm, norm)
+    unless %i(stft cqt).include?(chroma_algorithm)
+      raise "invalid chroma chroma_algorithm: #{chroma_algorithm}"
     end
 
     @song = song
-    @chroma_kind = chroma_kind
+    @chroma_algorithm = chroma_algorithm
     @norm = norm == :inf ? Numpy.inf : norm
 
-    prefix = chroma_kind, norm
+    prefix = chroma_algorithm, norm
 
     super(song, kind: :chromagram, prefix: prefix)
   end
@@ -50,7 +50,7 @@ class Chromagram < ChorsFile
     y, sr = Librosa.load(@song.audio.path).to_a
 
     chromas =
-      case @chroma_kind
+      case @chroma_algorithm
       when :stft
         Librosa.feature.chroma_stft(y=y, sr=sr, norm: @norm)
       when :cqt

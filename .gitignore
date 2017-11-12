@@ -1,6 +1,7 @@
 *.log
 audios/*
 chromas/*
+chords/*
 figs/*
 experiments/*
 templates/*

@@ -1,9 +1,18 @@
 require File.expand_path("../chors.rb", __FILE__)
 
 class TemplateBank
-  def initialize(binary: true, folds: 1)
+  def initialize(binary: true, normalize: false, folds: 1,
+                 chroma_algorithm: :stft)
     @binary = binary
     @folds = folds
+  end
+
+  def name
+    @binary ? :bin : :learned
+  end
+
+  def normalize?
+    !!@normalize
   end
 
   def best_match(chroma, fold: 0)
@@ -30,12 +39,6 @@ class TemplateBank
     end
 
     @songs
-  end
-
-  def each
-    [templates, songs].transpose.each do |template, song_list|
-      yield template, song_list
-    end
   end
 
   def self.dir
