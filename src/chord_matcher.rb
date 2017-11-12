@@ -12,7 +12,7 @@ class ChordMatcher
 
     @main_chord_templates = {}
     pitches.each do |pitch|
-      %w(maj min dim aug).each do |shorthand|
+      %w(maj min).each do |shorthand|
         label = [pitch, shorthand != "maj" ? shorthand : nil].compact.join(":")
         @main_chord_templates[notes(label)] = label
       end

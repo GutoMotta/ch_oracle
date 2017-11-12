@@ -1,11 +1,11 @@
 class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
-                 normalize_templates: nil, normalize_chromas: :inf,
+                 templates_norm: nil, normalize_chromas: :inf,
                  smooth_frames: 0, post_filtering: false, verbose: true)
     @templates = TemplateBank.new(
       binary: templates == :bin,
       chroma_algorithm: chroma_algorithm,
-      normalize: normalize_templates
+      norm: templates_norm
     )
 
     @chroma_algorithm = chroma_algorithm
@@ -20,7 +20,7 @@ class Experiment
     @id ||= [
       @chroma_algorithm,
       @templates.name,
-      @templates.normalize?,
+      @templates.norm,
       @normalize_chromas,
       @smooth_frames,
       @post_filtering
@@ -33,7 +33,7 @@ class Experiment
 
       \tchroma_algorithm     => #{@chroma_algorithm}
       \ttemplates            => #{@templates}
-      \tnormalize_templates  => #{@normalize_templates}
+      \ttemplates_norm       => #{@templates_norm}
       \tnormalize_chromas    => #{@normalize_chromas}
       \tsmooth_frames        => #{@smooth_frames}
       \tpost_filtering       => #{@post_filtering}

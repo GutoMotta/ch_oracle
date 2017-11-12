@@ -46,7 +46,7 @@ class Song
     prefix = [
       chroma_algorithm,
       templates.name,
-      templates.normalize?,
+      templates.norm,
       normalize_chromas,
       smooth_frames,
       post_filtering

@@ -20,4 +20,8 @@ class Chroma
   def similarity(other_chroma)
     [feature, other_chroma].transpose.map { |f, o| f * o }.sum
   end
+
+  def raw
+    [on, off, feature]
+  end
 end

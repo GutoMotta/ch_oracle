@@ -1,24 +1,25 @@
 class TemplateBank
-  def initialize(binary: true, normalize: false, folds: 1,
-                 chroma_algorithm: :stft)
+  include AnnotationLoop
+  attr_reader :norm
+
+  FOLDS = 4
+
+  def initialize(binary: true, chromas_norm: 2,
+                 norm: false, chroma_algorithm: :stft)
     @binary = binary
-    @folds = folds
+    @folds = binary ? 1 : FOLDS
+    @chromas_norm = chromas_norm
+    @norm = norm
+    @chroma_algorithm = chroma_algorithm
   end
 
   def name
-    @binary ? :bin : :learned
-  end
-
-  def normalize?
-    !!@normalize
+    return :bin if @binary
+    "#{@chroma_algorithm}_#{@chromas_norm}_#{@norm}"
   end
 
   def best_match(chroma, fold: 0)
     templates[fold - 1].max_by { |_, template| chroma.similarity template }[0]
-  end
-
-  def name
-    "#{@binary ? :binary : :learned}"
   end
 
   def templates
@@ -111,6 +112,75 @@ class TemplateBank
   end
 
   def learn_templates
-    # TODO
+    chord_normalizer = ChordMatcher.new
+
+    all_folds = @folds.times.to_a
+
+    average_chromas = Hash.new do |hash, key|
+      hash[key] = Hash.new do |internal_hash, internal_key|
+        internal_hash[internal_key] = { acc: Array.new(12, 0), divide_by: 0 }
+      end
+    end
+
+    songs_by_fold.each_with_index do |songs, fold_to_skip|
+      songs.each_with_index do |song, song_i|
+        chromas = song.chromagram(
+          chroma_algorithm: @chroma_algorithm,
+          norm: @chromas_norm
+        )
+
+        chromas.map!(&:raw)
+
+        chords = song.ground_truth
+
+        (all_folds - [fold_to_skip]).each do |fold|
+          annotation_loop(chords, chromas) do |chord, chroma, duration|
+            if normalized_chord = chord_normalizer.normalize(chord)
+              acc = average_chromas[fold][normalized_chord][:acc]
+
+              new_acc = acc.zip(chroma).map(&:sum)
+
+              average_chromas[fold][normalized_chord][:acc] = new_acc
+              average_chromas[fold][normalized_chord][:divide_by] += duration
+            end
+          end
+        end
+
+        percent = (100.0 * song_i / songs.size).round(2)
+        puts "building templates, fold #{fold_to_skip}: #{percent} %"
+      end
+    end
+
+    average_chromas = divide_accumulated_chromas(average_chromas)
+
+    average_chromas.zip(songs_by_fold)
+  end
+
+  def divide_accumulated_chromas(accumulated_chromas_hash)
+    accumulated_chromas_hash.map do |fold, chords_chromas|
+      templates = chords_chromas.map do |chord, chroma|
+        accumulated = chroma[:acc]
+        divide_by = chroma[:divide_by]
+
+        [chord, accumulated.map { |value| value / divide_by }]
+      end
+
+      templates.to_h
+    end
+  end
+
+  def songs_by_fold
+    all_songs = Song.all
+
+    songs_by_fold = (1.0 * all_songs.size / @folds).ceil
+
+    songs_lists = all_songs.shuffle.each_slice(songs_by_fold).to_a
+
+    songs_lists.each_with_index do |songs, fold|
+      content = songs.map { |song | song.audio.path }.join("\n")
+      write(path(fold, kind: :list), content)
+    end
+
+    songs_lists
   end
 end
