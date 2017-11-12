@@ -56,6 +56,7 @@ class ChorsFile
     File.exists? path
   end
 
+
   private
 
   def dir_path_inside_chors

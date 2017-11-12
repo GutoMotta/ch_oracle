@@ -57,7 +57,7 @@ class Experiment
 
     save_description
 
-    # extract_chromas
+    # load_songs
 
     # load_templates
 

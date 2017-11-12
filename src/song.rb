@@ -5,7 +5,24 @@ class Song
 
   def initialize(album, title)
     @album = album
-    @title = title[/.*(?=\.mp3)?/]
+    @title = title.split(".mp3")[0]
+  end
+
+  def self.all
+    all_songs = []
+
+    audios_dir = File.expand_path("../../audios", __FILE__)
+    albums_paths = Dir["#{audios_dir}/*"]
+    albums_paths.each do |album_path|
+      album = album_path.split('/').last
+
+      all_songs += Dir["#{album_path}/*"].map do |song_path|
+        song = song_path.split('/').last
+        new(album, song)
+      end
+    end
+
+    all_songs
   end
 
   def audio
