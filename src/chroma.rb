@@ -1,19 +1,23 @@
 class Chroma
-  attr_reader :on, :off, :chroma
+  attr_reader :on, :off, :feature
 
   def self.parse(line)
-    on, off, chroma = line.split(' ')
+    on, off, feature = line.split(' ')
 
-    new on.to_f, off.to_f, chroma.split(' ').map(&:to_f)
+    new on.to_f, off.to_f, feature.split(',').map(&:to_f)
   end
 
-  def initialize(on, off, chroma)
+  def initialize(on, off, feature)
     @on = on
     @off = off
-    @chroma = chroma
+    @feature = feature
   end
 
   def to_s
-    "#{on} #{off} #{chroma.join ','}"
+    "#{on} #{off} #{feature.join ','}"
+  end
+
+  def similarity(other_chroma)
+    [feature, other_chroma].transpose.map { |f, o| f * o }.sum
   end
 end

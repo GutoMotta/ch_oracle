@@ -41,4 +41,17 @@ class Song
       [on.to_f, off.to_f, chord]
     end
   end
+
+  def chords(binary_templates: true)
+    templates = TemplateBank.new(binary: binary_templates)
+
+    chromagram.map do |chroma|
+      chord = templates.best_match chroma
+      [chroma.on, chroma.off, chord]
+    end
+
+    # smooth_frames if @smooth_frames
+
+    # classify_chords_in_frames
+  end
 end
