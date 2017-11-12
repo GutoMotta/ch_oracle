@@ -1,5 +1,3 @@
-require File.expand_path("../chors.rb", __FILE__)
-
 class TemplateBank
   def initialize(binary: true, normalize: false, folds: 1,
                  chroma_algorithm: :stft)

@@ -1,5 +1,3 @@
-require File.expand_path("../chors.rb", __FILE__)
-
 class Annotation < ChorsFile
   def data
     read.lines.map do |line|

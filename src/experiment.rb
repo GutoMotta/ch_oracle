@@ -1,5 +1,3 @@
-require File.expand_path("../chors.rb", __FILE__)
-
 class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
                  normalize_templates: nil, normalize_chromas: :inf,

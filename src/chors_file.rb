@@ -1,5 +1,3 @@
-require File.expand_path("../chors.rb", __FILE__)
-
 class ChorsFile
   KIND_REQUIRE_PREFIX = %i(chromagram experiment chords)
   ALLOWED_KINDS = %i(audio chromagram ground_truth experiment chords)
