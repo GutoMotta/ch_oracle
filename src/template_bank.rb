@@ -6,7 +6,7 @@ class TemplateBank
     @folds = folds
   end
 
-  def best_match(chroma, fold: 1)
+  def best_match(chroma, fold: 0)
     templates[fold - 1].max_by { |_, template| chroma.similarity template }[0]
   end
 
@@ -14,17 +14,26 @@ class TemplateBank
     "#{@binary ? :binary : :learned}"
   end
 
-  def song_lists
-    unless @song_lists
+  def templates
+    unless @templates
       build_templates unless exists?
-      @song_lists = 1.upto(@folds).map { |fold| load_song_list(fold) }
+      @templates = @folds.times.map { |fold| load_templates(fold) }
     end
 
-    @song_lists
+    @templates
+  end
+
+  def songs
+    unless @songs
+      build_templates unless exists?
+      @songs = @folds.times.map { |fold| load_songs(fold) }
+    end
+
+    @songs
   end
 
   def each
-    [templates, song_list].transpose.each do |template, song_list|
+    [templates, songs].transpose.each do |template, song_list|
       yield template, song_list
     end
   end
@@ -33,27 +42,27 @@ class TemplateBank
     @@dir ||= File.expand_path("../../templates", __FILE__)
   end
 
+  def song_fold(song)
+    songs.index do |song_list|
+      song_list.index { |s| s.id == song.id }
+    end
+  end
+
 
   private
 
-  def templates
-    unless @templates
-      build_templates unless exists?
-      @templates = 1.upto(@folds).map { |fold| load_templates(fold) }
-    end
-
-    @templates
-  end
-
   def exists?
-    1.upto(@folds).map { |fold| File.exists? path(fold) }.all?
+    folds_existance = @folds.times.map do |fold|
+      File.exists?(path fold) && File.exists?(path fold, kind: :list)
+    end
+    folds_existance.all?
   end
 
   def dir
     "#{self.class.dir}/#{name}"
   end
 
-  def path(fold=1, kind: :templates)
+  def path(fold=0, kind: :templates)
     "#{dir}/fold#{fold}.#{kind == :templates ? 'yml' : kind}"
   end
 
@@ -61,8 +70,8 @@ class TemplateBank
     YAML.load File.read(path(fold))
   end
 
-  def load_song_list(fold)
-    File.read(path(fold, kind: :list)).lines.map(&:strip)
+  def load_songs(fold)
+    File.read(path(fold, kind: :list)).lines.map { |path| Song.parse path }
   end
 
   def write(file_path, content)
@@ -73,12 +82,14 @@ class TemplateBank
   def build_templates
     templates_array = @binary ? build_binary_templates : learn_templates
 
-    templates_array.each_with_index do |templates_and_list, fold|
-      templates, song_list = templates_and_list
+    templates_array.each_with_index do |templates_and_songs, fold|
+      templates, songs = templates_and_songs
 
-      write(path(fold + 1), templates.to_yaml)
+      write(path(fold), templates.to_yaml)
 
-      write(path(fold + 1, kind: :list), song_list.join("\n"))
+      songs_paths = songs.map { |song| song.audio.path }
+
+      write(path(fold, kind: :list), songs_paths.join("\n"))
     end
   end
 
@@ -95,7 +106,7 @@ class TemplateBank
       chromas["#{label}:min"] = c_minor.rotate(-i)
     end
 
-    [chromas, Song.all]
+    [[chromas, Song.all]]
   end
 
   def learn_templates
