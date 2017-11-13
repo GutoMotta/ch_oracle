@@ -63,7 +63,7 @@ class ChorsFile
     when :audio
       ['audios']
     when :chromagram
-      ['chromas', @prefix]
+      ['chromagrams', @prefix]
     when :ground_truth
       ['ground_truth']
     when :experiment

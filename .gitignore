@@ -1,8 +1,9 @@
 *.log
 audios/*
-chromas/*
+chromagrams/*
 chords/*
 figs/*
 experiments/*/results
 templates/*
 .byebug_history
+runfile
