@@ -15,7 +15,7 @@ class TemplateBank
 
   def name
     return :bin if @binary
-    "#{@chroma_algorithm}-#{@chromas_norm}-#{@norm}"
+    "t(#{@chroma_algorithm}-#{@chromas_norm}-#{@norm})"
   end
 
   def best_match(chroma, fold: 0)

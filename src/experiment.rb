@@ -1,6 +1,6 @@
 class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
-                 templates_norm: nil, normalize_chromas: :inf,
+                 templates_norm: 2, chromas_norm: 2,
                  smooth_chromas: 0, post_filtering: false, verbose: true)
     @templates = TemplateBank.new(
       binary: templates == :bin,
@@ -9,7 +9,7 @@ class Experiment
     )
 
     @chroma_algorithm = chroma_algorithm
-    @normalize_chromas = normalize_chromas
+    @chromas_norm = chromas_norm
     @smooth_chromas = smooth_chromas
     @post_filtering = post_filtering
 
@@ -20,11 +20,10 @@ class Experiment
     @id ||= [
       @chroma_algorithm,
       @templates.name,
-      @templates.norm,
-      @normalize_chromas,
+      @chromas_norm,
       @smooth_chromas,
-      @post_filtering
-    ].map { |attribute| attribute || "nil" }.join("_")
+      @post_filtering || 'no-pf'
+    ].join("_")
   end
 
   def description
@@ -34,7 +33,7 @@ class Experiment
       \tchroma_algorithm     => #{@chroma_algorithm}
       \ttemplates            => #{@templates.name}
       \ttemplates_norm       => #{@templates_norm}
-      \tnormalize_chromas    => #{@normalize_chromas}
+      \tchromas_norm         => #{@chromas_norm}
       \tsmooth_chromas       => #{@smooth_chromas}
       \tpost_filtering       => #{@post_filtering}
 
@@ -54,7 +53,7 @@ class Experiment
       @templates,
       {
         chroma_algorithm: @chroma_algorithm,
-        normalize_chromas: @normalize_chromas,
+        chromas_norm: @chromas_norm,
         smooth_chromas: @smooth_chromas,
         post_filtering: @post_filtering
       }

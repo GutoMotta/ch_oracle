@@ -41,16 +41,15 @@ class Song
     @ground_truth ||= Annotation.new(self, kind: :ground_truth).data
   end
 
-  def chords(templates, chroma_algorithm: nil, normalize_chromas: nil,
-             smooth_chromas: nil, post_filtering: nil)
+  def chords(templates, chroma_algorithm: :stft, chromas_norm: 2,
+             smooth_chromas: 0, post_filtering: false)
     prefix = [
       chroma_algorithm,
       templates.name,
-      templates.norm,
-      normalize_chromas,
+      chromas_norm,
       smooth_chromas,
-      post_filtering
-    ].map { |attribute| attribute || "nil" }.join("_")
+      post_filtering || 'no-pf'
+    ].join("_")
 
     file = Annotation.new(self, kind: :chords, prefix: prefix)
 
@@ -58,7 +57,7 @@ class Song
 
     song_fold = templates.song_fold self
 
-    chromas = chromagram(chroma_algorithm: chroma_algorithm)
+    chromas = chromagram(chroma_algorithm: chroma_algorithm, norm: chromas_norm)
 
     chromas = smooth(chromas, smooth_chromas)
 
@@ -66,6 +65,8 @@ class Song
       chord = templates.best_match chroma, fold: song_fold
       [chroma.on, chroma.off, chord]
     end
+
+    chords = post_filter(chords) if post_filtering
 
     file.write chords
 
@@ -89,6 +90,31 @@ class Song
     chromas.map(&:feature).transpose.map do |note_intensities|
       note_intensities.sum.to_f / n
     end
+  end
+
+  def post_filter(chords)
+    minimum_consecutive_frames_for_a_chord = 5
+    k = minimum_consecutive_frames_for_a_chord / 2
+
+    n = chords.size
+    chords.each.with_index do |chord, i|
+      from = [i - k, 0].max
+      to = [i + k, n - 1].min
+
+      chords[i][2] = majority(chords[from..to].map(&:last)) || chord.last
+    end
+
+    chords
+  end
+
+  def majority(chords)
+    chords_with_counts = chords.map.with_index do |chord, i|
+      [chords.count(chord), i, chord]
+    end
+
+    chords_with_counts.sort!.reverse!
+
+    chords_with_counts.first[0] > 1 ? chords_with_counts.first[2] : nil
   end
 
   def evaluation(experiment)

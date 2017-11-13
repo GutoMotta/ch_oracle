@@ -1,25 +1,25 @@
 require 'yaml'
+require 'byebug'
 
-measures_path = File.expand_path("../../measures", __FILE__)
-dirs = Dir["#{measures_path}/*"]
-dir_paths = dirs.map { |dir| [dir, Dir["#{dir}/*/*"]] }.to_h
+dir = File.expand_path("../../experiments", __FILE__)
+dirs = Dir["#{dir}/*"]
 
 results = dirs.map do |dir|
-  next unless File.exists?("#{dir}/overall.yml")
+  path = "#{dir}/results.yml"
+  next unless File.exists?(path)
 
   experiment_name = dir.split("/").last
 
-  paths = dir_paths[dir]
-
+  paths = Dir["#{dir}/results/*/*"]
   precisions = paths.map do |path|
     file_content = File.read(path)
     YAML.load(file_content)['precision'].to_f
   end
 
   min_precision, max_precision = precisions.minmax
-  file_content = File.read("#{dir}/overall.yml")
-  file_content_hash = YAML.load(file_content)
-  avg_precision = file_content_hash['precisions']['avg']
+
+  _results = YAML.load File.read(path)
+  avg_precision = _results.max_by { |_, h| h['precision'] }[1]['precision']
 
   [
     experiment_name,
@@ -29,7 +29,7 @@ results = dirs.map do |dir|
   ]
 end
 
-results.compact!.sort_by! { |name, avg, min, max| -avg }
+results = results.compact.sort_by { |name, avg, min, max| -avg }
 labels = %w(avg min max)
 
 results.each do |result|
