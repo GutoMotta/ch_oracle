@@ -1,0 +1,5 @@
+---
+fold0:
+  precision: 0.5316480064354034
+  recall: .nan
+  f_measure: .nan

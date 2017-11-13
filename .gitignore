@@ -3,6 +3,6 @@ audios/*
 chromas/*
 chords/*
 figs/*
-experiments/*
+experiments/*/results
 templates/*
 .byebug_history

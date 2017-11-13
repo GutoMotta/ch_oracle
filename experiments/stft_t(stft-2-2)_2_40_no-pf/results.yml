@@ -1,0 +1,17 @@
+---
+fold0:
+  precision: 0.4298474717403647
+  recall: 1.0
+  f_measure: 0.5925086898873124
+fold1:
+  precision: 0.4558112468122083
+  recall: 1.0
+  f_measure: 0.6116254977230997
+fold2:
+  precision: 0.3880804553593643
+  recall: 1.0
+  f_measure: 0.5468417911096671
+fold3:
+  precision: 0.41717110414397146
+  recall: 1.0
+  f_measure: 0.5737132978947875
