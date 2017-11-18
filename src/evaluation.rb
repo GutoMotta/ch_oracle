@@ -12,14 +12,20 @@ class Evaluation
 
     @true_positives, @false_positives, @false_negatives = count_matches
 
-    @precision = 1.0 * @true_positives / (@true_positives + @false_positives)
-    @recall = 1.0 * @true_positives / (@true_positives + @false_negatives)
+    @precision = divide_or_zero(
+      @true_positives,
+      @true_positives + @false_positives
+    )
 
-    if @precision + @recall == 0
-      @f_measure = 0
-    else
-      @f_measure = 2 * @precision * @recall / (@precision + @recall)
-    end
+    @recall = divide_or_zero(
+      @true_positives,
+      @true_positives + @false_negatives
+    )
+
+    @f_measure = divide_or_zero(
+      2 * @precision * @recall,
+      @precision + @recall
+    )
   end
 
   def chords_match(label_a, label_b)
@@ -60,5 +66,11 @@ class Evaluation
       "recall" => recall,
       "f_measure" => f_measure
     }
+  end
+
+  private
+
+  def divide_or_zero(a, b)
+    b == 0 ? 0 : a.to_f / b
   end
 end
