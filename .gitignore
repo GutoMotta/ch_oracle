@@ -1,4 +1,3 @@
-*.log
 audios/*
 .byebug_history
 runfile

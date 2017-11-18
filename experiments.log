@@ -1,0 +1,66 @@
+Experimentos
+
+Primeira tentativa:
+  - STFT
+  - Templates binários
+
+Alterações:
+  - CQT
+  - Templates aprendidos
+  - Normalização das cromas
+  - Normalização dos templates
+  - Suavização temporal
+  - Distância euclidiana
+  - Filtragem de outliers
+
+Estrutura dos experimentos:
+  Depende do librosa:
+    - CQT ou STFT
+    - Templates aprendidos
+
+  Depois de extrair o chroma:
+    - Normalização das cromas
+    - Normalização dos templates
+    - Suavização temporal
+    - Distância euclidiana
+    - Filtragem de outliers
+
+Escolhas:
+  cromas [ STFT,      CQT                ]
+  simil. [ dot,       euclid             ]
+  cromas [ norm-inf,  norm2              ]
+  templ. [ bin,       avg,    norm-templ ]
+  cromas [ none,      suav               ]
+
+
+RELATOS:
+  1
+    Tentei dividir por 2 as intensidades das notas nos templates aprendidos
+    quando elas não eram pertencentes ao acorde em si. Fiz no
+
+      stft_t(stft-2-2)_2_0_no-pf
+
+    A precisão caiu de 26.73 para 24.53
+
+
+  2
+    Estou tentando extrair cromas com potência 3 em vez de 2.
+
+    A lógica por trás disso é que quero ampliar as diferenças de intensidade
+    entre as notas que de fato são tocadas e as frequências que aparecem por
+    serem harmônicos, ruído etc.
+
+    Com isso, o template aprendido deveria refletir esse aumento de distâncias
+    e ficar mais realista (mais próximo do binário).
+
+    Inclusive, os templates aprendidos estão tão distantes dos binários que
+    em alguns casos, quando peço o best match desses chromas com os templates
+    binários, o acorde reconhecido vem diferente do label do template.
+
+    Isso aconteceu em 3 casos específicos. 2 num mesmo fold, 1 em outro.
+
+    Os templates que deram best match com acordes diferentes do próprio foram
+    o do G#:min (que caiu no B, em duas ocorrências) e o do D#:min (que caiu
+    em D#)
+
+

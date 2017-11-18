@@ -1,3 +1,5 @@
+require 'fileutils'
+
 @directories_to_stash = %w(chords chromagrams experiments figs templates)
 
 def already_stashed?
@@ -14,13 +16,16 @@ def stash
 end
 
 def existing_directories
-  @directories_to_stash.select { |dir| File.directory?(dir) }
+  @directories_to_stash.select do |dir|
+    File.directory?(dir) && File.directory?("old_#{dir}")
+  end
 end
 
 def pop
   @directories_to_stash.each do |dir|
     if File.directory?("old_#{dir}")
       puts "old_#{dir} => #{dir}"
+      FileUtils.remove_dir dir
       File.rename("old_#{dir}", dir)
     end
   end
@@ -45,6 +50,6 @@ when 'pop'
       exit
     end
   end
-
+  puts
   pop
 end
