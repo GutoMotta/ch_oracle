@@ -81,8 +81,6 @@ class Experiment
         song.evaluation(self)
       end
 
-      fold_results
-
       results["fold#{fold}"] = average(fold_results)
     end
 
