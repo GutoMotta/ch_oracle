@@ -1,10 +1,6 @@
 class Chromagram < ChorsFile
   HOP_LENGTH = 512
 
-  def self.chromas(song, chroma_algorithm: :stft, norm: 2)
-    new(song, chroma_algorithm, norm).chromas
-  end
-
   def initialize(song, chroma_algorithm, norm)
     unless %i(stft cqt).include?(chroma_algorithm)
       raise "invalid chroma chroma_algorithm: #{chroma_algorithm}"

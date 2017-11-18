@@ -44,6 +44,15 @@ class Experiment
     @results ||= already_ran? ? load_results : run
   end
 
+  def all_results
+    @all_results ||= Song.all.map do |song|
+      attributes = song.evaluation(self).merge({ 'song': song })
+      OpenStruct.new attributes
+    end
+
+    @all_results.sort_by(&:precision)
+  end
+
   def directory
     @directory ||= File.expand_path("../../experiments/#{id}", __FILE__)
   end

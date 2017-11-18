@@ -3,6 +3,7 @@ require 'fileutils'
 require 'matrix'
 require 'set'
 require 'yaml'
+require 'ostruct'
 
 require File.expand_path("../chors_file.rb", __FILE__)
 require File.expand_path("../annotation_loop.rb", __FILE__)

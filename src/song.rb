@@ -1,10 +1,7 @@
 class Song
-  attr_reader :album, :title
+  include AnnotationLoop
 
-  def initialize(album, title)
-    @album = album
-    @title = title.split(".mp3")[0]
-  end
+  attr_reader :album, :title
 
   def self.parse(path)
     album, title = path.split('/')[-2..-1]
@@ -25,6 +22,20 @@ class Song
     all_songs
   end
 
+  def self.find_all(regex)
+    regex = Regexp.new(regex)
+    all.select { |song| song.id.find { |str| str =~ regex } }
+  end
+
+  def self.find(regex)
+    find_all(regex).first
+  end
+
+  def initialize(album, title)
+    @album = album
+    @title = title.split(".mp3")[0]
+  end
+
   def id
     [album, title]
   end
@@ -33,12 +44,42 @@ class Song
     @audio ||= ChorsFile.new(self, kind: :audio)
   end
 
-  def chromagram(chroma_algorithm: :stft, norm: 2)
-    Chromagram.chromas(self, chroma_algorithm: chroma_algorithm, norm: norm)
+  def chromagram(chroma_algorithm: :stft, norm: 2, n_fft: 2048)
+    Chromagram.new(self,chroma_algorithm,norm: norm,n_fft: n_fft)
   end
 
   def ground_truth
     @ground_truth ||= Annotation.new(self, kind: :ground_truth).data
+  end
+
+  def pretty_print(recognition_params, to: nil)
+    time = 0
+    chords = chords_without_dup(recognition_params)
+    to ||= chords.last[1]
+    annotation_loop(chords, ground_truth) do |chord, gt_chord, dur|
+      break if time > to
+
+      next_time = (time + dur).round(2)
+      print "#{time}\t#{next_time}\t#{chord}\t#{gt_chord}\n"
+      time = next_time
+    end
+    nil
+  end
+
+  def chords_without_dup(recognition_params)
+    chords = chords(*recognition_params)
+
+    chords_without_dup = chords.select.with_index do |on_off_chord, i|
+      _, _, chord = on_off_chord
+      _, _, next_chord = chords[i + 1]
+      chord != next_chord
+    end
+
+    next_on = 0
+    chords_without_dup.each do |on_off_chord|
+      on_off_chord[0] = next_on
+      next_on = on_off_chord[1]
+    end
   end
 
   def chords(templates, chroma_algorithm: :stft, chromas_norm: 2,
@@ -57,9 +98,11 @@ class Song
 
     song_fold = templates.song_fold self
 
-    chromas = chromagram(chroma_algorithm: chroma_algorithm, norm: chromas_norm)
-
-    chromas = smooth(chromas, smooth_chromas)
+    chromagram = chromagram(
+      chroma_algorithm: chroma_algorithm,
+      norm: chromas_norm
+    )
+    chromas = smooth(chromagram.chromas, smooth_chromas)
 
     chords = chromas.map do |chroma|
       chord = templates.best_match chroma, fold: song_fold
