@@ -63,4 +63,46 @@ RELATOS:
     o do G#:min (que caiu no B, em duas ocorrências) e o do D#:min (que caiu
     em D#)
 
+  3
+    Comecei a olhar para os reconhecimentos que têm precisão muito baixa.
 
+    O pior de todos, com precisão muito próxima de 0, é a canção Lovely Rita.
+
+    O motivo de isto acontecer é que ela está afinada em 430 Hz em vez de
+    440 Hz, o que faz com que todos os acordes sejam reconhecidos um semitom
+    abaixo.
+
+    Chris Harte cita isso na tese dele, junto com algumas outras músicas que
+    costumam ser problemáticas.
+
+    Vou tentar estimar a afinação da música antes de rodar o reconhecimento e
+    ver o que acontece.
+
+    ----------------------
+
+    Estimei a afinação. As intensidades do chromagrama estão sendo calculadas
+    com mais proximidade das notas agora. Isso pode ser bom tanto usando
+    templates binários como aprendendo templates (usando chromas com estimativa
+    de afinação como base para o aprendizado).
+
+    A Librosa recebe um parâmetro 'resolução' no método de estimativa de
+    afinação, que por padrão é 1e-2. Quanto menor for o valor desse parâmetro,
+    mais precisa será a estimativa de tuning. Porém, essa melhoria tem um custo
+    computacional considerável.
+
+    O valor de resolução que fez uma diferença aparente sem prejudicar muito o
+    desempenho do reconhecimento foi 1e-6. O aumento no tempo para extração dos
+    acordes de um sinal com esse parâmetro foi de 18%.
+
+    Com resolução de 1e-6, a estimativa de pitch melhora o reconhecimento de
+    algumas músicas (como Lovely Rita, por exemplo), mas piora o de outras,
+    fazendo com que a média abaixe um pouquinho. Pensei que talvez a
+    distribuição ficasse mais homogênea com esse setup, mas não: ela fica muito
+    parecida.
+
+    Depois quero testar outros parâmetros de resolução e ver se há algum que
+    traz um impacto positivo.
+
+    Outra análise que vale a pena fazer: será que a distribuição continua a
+    mesma pelo mesmo motivo? O que está fazendo com que algumas músicas sejam
+    classificadas com uma precisão alta e outras com precisão baixa?
