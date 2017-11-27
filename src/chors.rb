@@ -1,9 +1,17 @@
 require 'byebug'
 require 'fileutils'
+require 'gruff'
 require 'matrix'
 require 'set'
 require 'yaml'
 require 'ostruct'
+
+module Gruff
+  module Themes
+    send(:remove_const, :KEYNOTE)
+    const_set(:KEYNOTE, PASTEL)
+  end
+end
 
 require File.expand_path("../chors_file.rb", __FILE__)
 require File.expand_path("../annotation_loop.rb", __FILE__)

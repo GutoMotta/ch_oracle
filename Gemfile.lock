@@ -2,13 +2,17 @@ GEM
   remote: https://rubygems.org/
   specs:
     byebug (9.1.0)
+    gruff (0.7.0)
+      rmagick (~> 2.13, >= 2.13.4)
     pycall (1.0.3)
+    rmagick (2.16.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   byebug
+  gruff
   pycall
 
 BUNDLED WITH
