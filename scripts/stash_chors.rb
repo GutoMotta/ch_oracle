@@ -31,6 +31,17 @@ def pop
   end
 end
 
+def invert
+  @directories_to_stash.each do |dir|
+    old_dir = "old_#{dir}"
+    tmp_dir = "tmp_#{dir}"
+
+    File.rename(dir, tmp_dir) if File.directory?(dir)
+    File.rename(old_dir, dir) if File.directory?(old_dir)
+    File.rename(tmp_dir, old_dir) if File.directory?(tmp_dir)
+  end
+end
+
 
 case ARGV[0]
 when nil
@@ -52,4 +63,6 @@ when 'pop'
   end
   puts
   pop
+when 'invert'
+  invert
 end
