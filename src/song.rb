@@ -44,8 +44,8 @@ class Song
     @audio ||= ChorsFile.new(self, kind: :audio)
   end
 
-  def chromagram(chroma_algorithm: :stft, norm: 2, n_fft: 2048)
-    Chromagram.new(self,chroma_algorithm,norm: norm,n_fft: n_fft)
+  def chromagram(chroma_algorithm: :stft, norm: 2)
+    Chromagram.new(self, chroma_algorithm, norm)
   end
 
   def ground_truth
