@@ -106,3 +106,33 @@ RELATOS:
     Outra análise que vale a pena fazer: será que a distribuição continua a
     mesma pelo mesmo motivo? O que está fazendo com que algumas músicas sejam
     classificadas com uma precisão alta e outras com precisão baixa?
+
+  4
+    Encontrei a definição dos tamanhos de janela e hop no Müller. Refazer os
+    testes usando esses novos parâmetros.
+
+    n_fft      = 4096
+    hop_length = 2048
+
+  5
+    Testar o espectral enhancement do Müller (pelo que entendi é só aplicar um
+    log no chromagrama, mas confirme isso no livro)
+
+
+  ÚLTIMOS PASSOS:
+
+    - passar o log no espectrograma As contribuições dos harmonicos superiores
+      tem contribuição muito forte em relação aos mais graves
+    - passar o log no
+    - escala em milissegundos dos gráficos com suavização temporal no texto
+    - transformada wavelet: outro tipo de análise multirresolução (?)
+
+
+
+    1) Fazer uma rotina que gera as visualizações de templates de forma mais
+       automática.
+    2) Vale a pena aprender os templates sem "normalizar" a representação dos
+       acordes? Ou seja, Gb seria ignorado em vez de considerado como F#.
+    3) Pense em aliasing e na SR que você está usando. O que está acontecendo
+       com as frequências muito agudas? Será que não estão sendo rebatidas??
+
