@@ -44,8 +44,10 @@ class Song
     @audio ||= ChorsFile.new(self, kind: :audio)
   end
 
-  def chromagram(chroma_algorithm: :stft, norm: 2)
-    Chromagram.new(self, chroma_algorithm, norm)
+  def chromagram(chroma_algorithm: :stft, norm: 2, n_fft: 2048,
+                 hop_length: 512)
+    Chromagram.new(self, chroma_algorithm, norm, n_fft: n_fft,
+                   hop_length: hop_length)
   end
 
   def ground_truth
@@ -83,11 +85,14 @@ class Song
   end
 
   def chords(templates, chroma_algorithm: :stft, chromas_norm: 2,
-             smooth_chromas: 0, post_filtering: false)
+             smooth_chromas: 0, post_filtering: false, n_fft: 2048,
+             hop_length: 512)
     prefix = [
       chroma_algorithm,
       templates.name,
       chromas_norm,
+      n_fft,
+      hop_length,
       smooth_chromas,
       post_filtering || 'no-pf'
     ].join("_")
@@ -100,7 +105,9 @@ class Song
 
     chromagram = chromagram(
       chroma_algorithm: chroma_algorithm,
-      norm: chromas_norm
+      norm: chromas_norm,
+      n_fft: n_fft,
+      hop_length: hop_length
     )
     chromas = smooth(chromagram.chromas, smooth_chromas)
 

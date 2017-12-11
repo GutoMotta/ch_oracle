@@ -1,17 +1,23 @@
 class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
                  templates_norm: 2, chromas_norm: 2,
-                 smooth_chromas: 0, post_filtering: false, verbose: true)
+                 smooth_chromas: 0, post_filtering: false,
+                 n_fft: 2048, hop_length: 512,
+                 verbose: true)
     @templates = TemplateBank.new(
       binary: templates == :bin,
       chroma_algorithm: chroma_algorithm,
-      norm: templates_norm
+      norm: templates_norm,
+      hop_length: hop_length,
+      n_fft: n_fft
     )
 
     @chroma_algorithm = chroma_algorithm
     @chromas_norm = chromas_norm
     @smooth_chromas = smooth_chromas
     @post_filtering = post_filtering
+    @n_fft = n_fft
+    @hop_length = hop_length
 
     @verbose = verbose
   end
@@ -25,6 +31,8 @@ class Experiment
       @chroma_algorithm,
       @templates.name,
       @chromas_norm,
+      @n_fft,
+      @hop_length,
       @smooth_chromas,
       @post_filtering || 'no-pf'
     ]
@@ -49,8 +57,21 @@ class Experiment
       \tchromas_norm         => #{@chromas_norm}
       \tsmooth_chromas       => #{@smooth_chromas}
       \tpost_filtering       => #{@post_filtering}
+      \tn_fft                => #{@n_fft}
+      \thop_length           => #{@hop_length}
 
     TXT
+  end
+
+  def best_fold
+    fold, result = results.max_by { |fold, result| result['precision'] }
+    {
+      fold => result
+    }
+  end
+
+  def best_precision
+    results.max_by { |fold, result| result['precision'] }[1]['precision']
   end
 
   def results
@@ -77,7 +98,9 @@ class Experiment
         chroma_algorithm: @chroma_algorithm,
         chromas_norm: @chromas_norm,
         smooth_chromas: @smooth_chromas,
-        post_filtering: @post_filtering
+        post_filtering: @post_filtering,
+        hop_length: @hop_length,
+        n_fft: @n_fft
       }
     ]
   end

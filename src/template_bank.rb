@@ -4,18 +4,20 @@ class TemplateBank
 
   FOLDS = 4
 
-  def initialize(binary: true, chromas_norm: 2,
-                 norm: 2, chroma_algorithm: :stft)
+  def initialize(binary: true, chromas_norm: 2, norm: 2,
+                 chroma_algorithm: :stft, n_fft: 2048, hop_length: 512)
     @binary = binary
     @folds = binary ? 1 : FOLDS
     @chromas_norm = chromas_norm
     @norm = norm
     @chroma_algorithm = chroma_algorithm
+    @n_fft = n_fft
+    @hop_length = hop_length
   end
 
   def name
     return :bin if @binary
-    "t(#{@chroma_algorithm}-#{@chromas_norm}-#{@norm})"
+    "t(#{@chroma_algorithm}-#{@chromas_norm}-#{@norm}-#{@n_fft}-#{@hop_length})"
   end
 
   def best_match(chroma, fold: 0)
@@ -122,8 +124,10 @@ class TemplateBank
       songs.each_with_index do |song, song_i|
         chromas = song.chromagram(
           chroma_algorithm: @chroma_algorithm,
-          norm: @chromas_norm
-        )
+          norm: @chromas_norm,
+          hop_length: @hop_length,
+          n_fft: @n_fft
+        ).chromas
 
         chromas.map!(&:raw)
 

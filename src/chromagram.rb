@@ -1,7 +1,6 @@
 class Chromagram < ChorsFile
-  HOP_LENGTH = 512
-
-  def initialize(song, chroma_algorithm, norm)
+  def initialize(song, chroma_algorithm, norm, n_fft: 2048, hop_length: 512,
+                 sr: 22050)
     unless %i(stft cqt).include?(chroma_algorithm)
       raise "invalid chroma chroma_algorithm: #{chroma_algorithm}"
     end
@@ -9,8 +8,11 @@ class Chromagram < ChorsFile
     @song = song
     @chroma_algorithm = chroma_algorithm
     @norm = norm == :inf ? Numpy.inf : norm
+    @n_fft = n_fft
+    @hop_length = hop_length
+    @sr = sr
 
-    prefix = chroma_algorithm, norm
+    prefix = chroma_algorithm, norm, n_fft, hop_length
 
     super(song, kind: :chromagram, prefix: prefix)
   end
@@ -40,17 +42,27 @@ class Chromagram < ChorsFile
   end
 
   def librosa_chroma_function_call
-    hop_length = HOP_LENGTH
-    y, sr = Librosa.load(@song.audio.path).to_a
+    y, sr = Librosa.load(@song.audio.path, sr: @sr).to_a
 
     chromas =
       case @chroma_algorithm
       when :stft
-        Librosa.feature.chroma_stft(y=y, sr=sr, norm: @norm)
+        Librosa.feature.chroma_stft(
+          y: y,
+          sr: sr,
+          norm: @norm,
+          n_fft: @n_fft,
+          hop_length: @hop_length
+        )
       when :cqt
-        Librosa.feature.chroma_cqt(y=y, sr=sr, norm: @norm)
+        Librosa.feature.chroma_cqt(
+          y: y,
+          sr: sr,
+          norm: @norm,
+          hop_length: @hop_length
+        )
       end
 
-    [chromas.tolist.to_a, hop_length.to_f / sr.to_f]
+    [chromas.tolist.to_a, @hop_length.to_f / sr.to_f]
   end
 end
