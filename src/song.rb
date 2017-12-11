@@ -69,7 +69,7 @@ class Song
   def chords_without_dup(recognition_params)
     chords = chords(*recognition_params)
 
-    chords_without_dup = chords.select.with_index do |on_off_chord, i|
+    chords_without_dup = chords[0..-2].select.with_index do |on_off_chord, i|
       chord = on_off_chord.last
       next_chord = chords[i + 1].last
       chord != next_chord
