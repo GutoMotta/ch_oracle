@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
+import re
 import yaml
 import os
 import sys
@@ -10,11 +13,31 @@ if len(sys.argv) < 2:
     sys.exit()
 
 template_file = sys.argv[1]
-template_dir = template_file.split("/")[-1].split(".")[0]
+pattern = re.compile(".*stft.*")
+if pattern.match(template_file):
+    title = "STFT"
+else:
+    title = "CQT"
+template_dir = "templates_%s" % title.lower()
 if not os.path.exists("figs/%s" % template_dir):
     os.makedirs("figs/%s" % template_dir)
 
+
 notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+notes_names = [
+    u"dó",
+    u"dó#",
+    u"ré",
+    u"ré#",
+    u"mi",
+    u"fá",
+    u"fá#",
+    u"sol",
+    u"sol#",
+    u"lá",
+    u"lá#",
+    u"si"
+]
 
 file = open(template_file)
 templates = yaml.load(file)
@@ -39,9 +62,9 @@ for chord, chroma in templates.iteritems():
     x = np.arange(len(chroma))
     fig, ax = plt.subplots()
     ax.bar(x, chroma, color=colors)
-    ax.set_title(chord)
+    # ax.set_title(title)
     ax.set_xticks(x)
-    ax.set_xticklabels(notes)
+    ax.set_xticklabels(notes_names)
     ax.set_ylim([0, 1])
 
     a = mpatches.Patch(color='palevioletred', label='1a')
@@ -53,5 +76,5 @@ for chord, chroma in templates.iteritems():
 
     mayor_or_minor = "minor" if minor else "mayor"
     fig_name = "%s_%s" % (mayor_or_minor, root)
-    plt.savefig("figs/%s/%s" % (template_dir, fig_name))
+    plt.savefig("figs/%s/%s" % (template_dir, fig_name), dpi=200)
     plt.close(fig)
