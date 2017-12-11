@@ -17,13 +17,26 @@ class Experiment
   end
 
   def id
-    @id ||= [
+    @id ||= attributes.join("_")
+  end
+
+  def attributes
+    @attributes ||= [
       @chroma_algorithm,
       @templates.name,
       @chromas_norm,
       @smooth_chromas,
       @post_filtering || 'no-pf'
-    ].join("_")
+    ]
+  end
+
+  def name
+    @name ||= [
+      @chroma_algorithm,
+      @templates.name,
+      "suav. temp. #{@smooth_chromas}",
+      "#{@post_filtering ? 'com' : 'sem'} pos filtr."
+    ].join(', ')
   end
 
   def description
