@@ -1,6 +1,6 @@
 class Chromagram < ChorsFile
   def initialize(song, chroma_algorithm, norm, n_fft: 2048, hop_length: 512,
-                 sr: 22050)
+                 compression_factor: 0, sr: 22050)
     unless %i(stft cqt).include?(chroma_algorithm)
       raise "invalid chroma chroma_algorithm: #{chroma_algorithm}"
     end
@@ -12,7 +12,7 @@ class Chromagram < ChorsFile
     @hop_length = hop_length
     @sr = sr
 
-    prefix = chroma_algorithm, norm, n_fft, hop_length
+    prefix = chroma_algorithm, norm, n_fft, hop_length, compression_factor
 
     super(song, kind: :chromagram, prefix: prefix)
   end

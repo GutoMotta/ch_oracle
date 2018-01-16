@@ -123,16 +123,11 @@ RELATOS:
 
     - passar o log no espectrograma As contribuições dos harmonicos superiores
       tem contribuição muito forte em relação aos mais graves
-    - passar o log no
     - escala em milissegundos dos gráficos com suavização temporal no texto
-    - transformada wavelet: outro tipo de análise multirresolução (?)
-
 
 
     1) Fazer uma rotina que gera as visualizações de templates de forma mais
        automática.
-    2) Vale a pena aprender os templates sem "normalizar" a representação dos
-       acordes? Ou seja, Gb seria ignorado em vez de considerado como F#.
     3) Pense em aliasing e na SR que você está usando. O que está acontecendo
        com as frequências muito agudas? Será que não estão sendo rebatidas??
 

@@ -44,10 +44,16 @@ class Song
     @audio ||= ChorsFile.new(self, kind: :audio)
   end
 
-  def chromagram(chroma_algorithm: :stft, norm: 2, n_fft: 2048,
-                 hop_length: 512)
-    Chromagram.new(self, chroma_algorithm, norm, n_fft: n_fft,
-                   hop_length: hop_length)
+  def chromagram(chroma_algorithm: :stft, norm: 2, n_fft: 2048, hop_length: 512,
+                 compression_factor: 0)
+    Chromagram.new(
+      self,
+      chroma_algorithm,
+      norm,
+      n_fft: n_fft,
+      hop_length: hop_length,
+      compression_factor: compression_factor
+    )
   end
 
   def ground_truth
@@ -86,7 +92,7 @@ class Song
 
   def chords(templates, chroma_algorithm: :stft, chromas_norm: 2,
              smooth_chromas: 0, post_filtering: false, n_fft: 2048,
-             hop_length: 512)
+             hop_length: 512, compression_factor: 0)
     prefix = [
       chroma_algorithm,
       templates.name,
@@ -94,7 +100,8 @@ class Song
       n_fft,
       hop_length,
       smooth_chromas,
-      post_filtering || 'no-pf'
+      post_filtering || 'no-pf',
+      compression_factor
     ].join("_")
 
     file = Annotation.new(self, kind: :chords, prefix: prefix)

@@ -1,5 +1,6 @@
 class Chroma
-  attr_accessor :on, :off, :feature
+  attr_writer :feature
+  attr_accessor :on, :off
 
   def self.parse(line)
     on, off, feature = line.split(' ')
@@ -7,10 +8,11 @@ class Chroma
     new on.to_f, off.to_f, feature.split(',').map(&:to_f)
   end
 
-  def initialize(on, off, feature)
+  def initialize(on, off, feature, compression_factor: 0)
     @on = on
     @off = off
     @feature = feature
+    @compression_factor = compression_factor
   end
 
   def to_s
@@ -21,7 +23,25 @@ class Chroma
     [feature, other_chroma].transpose.map { |f, o| f * o }.sum
   end
 
+  def feature
+    if @compression_factor.to_i > 0
+      compressed_feature
+    else
+      @feature
+    end
+  end
+
   def raw
     [on, off, feature]
+  end
+
+  private
+
+  def compressed_feature
+    return @compressed_feature if @compressed_feature
+
+    vector_feature = Vector[*@feature]
+    vector_feature.map! { |i| Math.log(1 + i * @compression_factor) }
+    @compressed_feature ||= vector_feature.normalize
   end
 end

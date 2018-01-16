@@ -4,8 +4,9 @@ class TemplateBank
 
   FOLDS = 4
 
-  def initialize(binary: true, chromas_norm: 2, norm: 2,
-                 chroma_algorithm: :stft, n_fft: 2048, hop_length: 512)
+  def initialize(binary: true, chromas_norm: 2, norm: 2, n_fft: 2048,
+                 hop_length: 512, chroma_algorithm: :stft,
+                 compression_factor: 0)
     @binary = binary
     @folds = binary ? 1 : FOLDS
     @chromas_norm = chromas_norm
@@ -13,11 +14,22 @@ class TemplateBank
     @chroma_algorithm = chroma_algorithm
     @n_fft = n_fft
     @hop_length = hop_length
+    @compression_factor = compression_factor
   end
 
   def name
     return :bin if @binary
-    "t(#{@chroma_algorithm}-#{@chromas_norm}-#{@norm}-#{@n_fft}-#{@hop_length})"
+    attrs = [
+      @chroma_algorithm,
+      @chromas_norm,
+      @norm,
+      @n_fft,
+      @hop_length,
+      @compression_factor
+    ]
+    main_name = attrs.join('-')
+
+    "t(#{main_name})"
   end
 
   def best_match(chroma, fold: 0)
@@ -126,7 +138,8 @@ class TemplateBank
           chroma_algorithm: @chroma_algorithm,
           norm: @chromas_norm,
           hop_length: @hop_length,
-          n_fft: @n_fft
+          n_fft: @n_fft,
+          compression_factor: @compression_factor
         ).chromas
 
         chromas.map!(&:raw)
@@ -188,7 +201,7 @@ class TemplateBank
     songs_lists = all_songs.shuffle.each_slice(songs_by_fold).to_a
 
     songs_lists.each_with_index do |songs, fold|
-      content = songs.map { |song | song.audio.path }.join("\n")
+      content = songs.map { |song| song.audio.path }.join("\n")
       write(path(fold, kind: :list), content)
     end
 

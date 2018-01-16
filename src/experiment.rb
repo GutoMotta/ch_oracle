@@ -3,13 +3,14 @@ class Experiment
                  templates_norm: 2, chromas_norm: 2,
                  smooth_chromas: 0, post_filtering: false,
                  n_fft: 2048, hop_length: 512,
-                 verbose: true)
+                 verbose: true, compression_factor: 0)
     @templates = TemplateBank.new(
       binary: templates == :bin,
       chroma_algorithm: chroma_algorithm,
       norm: templates_norm,
       hop_length: hop_length,
-      n_fft: n_fft
+      n_fft: n_fft,
+      compression_factor: compression_factor
     )
 
     @chroma_algorithm = chroma_algorithm
@@ -18,6 +19,7 @@ class Experiment
     @post_filtering = post_filtering
     @n_fft = n_fft
     @hop_length = hop_length
+    @compression_factor = compression_factor
 
     @verbose = verbose
   end
@@ -34,7 +36,8 @@ class Experiment
       @n_fft,
       @hop_length,
       @smooth_chromas,
-      @post_filtering || 'no-pf'
+      @post_filtering || 'no-pf',
+      @compression_factor
     ]
   end
 
@@ -59,6 +62,7 @@ class Experiment
       \tpost_filtering       => #{@post_filtering}
       \tn_fft                => #{@n_fft}
       \thop_length           => #{@hop_length}
+      \tcompression_factor   => #{@compression_factor}
 
     TXT
   end
