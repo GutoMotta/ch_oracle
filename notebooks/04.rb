@@ -1,6 +1,6 @@
 png_name = '04-stft-e-cqt-bin-suavizacao-temporal.png'
 
-smooth_values = 0, 5, 10, 20, 30, 40, 50
+smooth_values = 0, 5, 10, 15, 20
 
 experiments = {
   'STFT': smooth_values.map do |k|
@@ -8,12 +8,12 @@ experiments = {
   end,
   'CQT': smooth_values.map do |k|
     Experiment.new(chroma_algorithm: :cqt, smooth_chromas: k)
-  end
+  end,
 }
 
 Gruff::Line.new.tap do |g|
   # g.title = 'Precisões com suavização temporal'
-  g.x_axis_label = 'Número de janelas suavizadas'
+  g.x_axis_label = 'Valor do parâmetro L'
   g.left_margin = g.right_margin = 40
   g.show_vertical_markers = true
 
@@ -21,9 +21,12 @@ Gruff::Line.new.tap do |g|
 
   experiments.each do |name, list|
     data = list.zip(smooth_values).map do |exp, k|
-      [k, exp.results.map { |_, h| h['precision'] }.max]
+      [k, exp.best_precision]
     end
+    p data
+
     data = data.transpose
+
 
     g.dataxy name, data[0], data[1]
   end
@@ -33,4 +36,3 @@ Gruff::Line.new.tap do |g|
 
   g.write "figs/notebooks/#{png_name}"
 end ; 1
-

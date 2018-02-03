@@ -114,7 +114,8 @@ class Song
       chroma_algorithm: chroma_algorithm,
       norm: chromas_norm,
       n_fft: n_fft,
-      hop_length: hop_length
+      hop_length: hop_length,
+      compression_factor: compression_factor
     )
     chromas = smooth(chromagram.chromas, smooth_chromas)
 

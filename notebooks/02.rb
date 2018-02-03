@@ -16,7 +16,7 @@ Gruff::Bar.new.tap do |g|
   end
 
   g.minimum_value = 0
-  g.maximum_value = 1
+  g.maximum_value = 0.4
 
   g.write "figs/notebooks/#{png_name}"
 end ; 1

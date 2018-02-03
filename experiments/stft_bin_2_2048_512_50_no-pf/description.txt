@@ -1,9 +1,0 @@
-Chord Recognition experiment with the following parameters:
-
-	chroma_algorithm     => stft
-	templates            => bin
-	templates_norm       => 
-	chromas_norm         => 2
-	smooth_chromas       => 50
-	post_filtering       => false
-

@@ -4,8 +4,8 @@ class TemplateBank
 
   FOLDS = 4
 
-  def initialize(binary: true, chromas_norm: 2, norm: 2, n_fft: 2048,
-                 hop_length: 512, chroma_algorithm: :stft,
+  def initialize(binary: true, chromas_norm: 2, norm: 2, n_fft: 4096,
+                 hop_length: 2048, chroma_algorithm: :stft,
                  compression_factor: 0)
     @binary = binary
     @folds = binary ? 1 : FOLDS
@@ -46,12 +46,10 @@ class TemplateBank
   end
 
   def songs
-    unless @songs
-      build_templates unless exists?
-      @songs = @folds.times.map { |fold| load_songs(fold) }
-    end
+    return @songs if @songs
 
-    @songs
+    build_templates unless exists?
+    @songs = @folds.times.map { |fold| load_songs(fold) }
   end
 
   def self.dir
@@ -140,9 +138,7 @@ class TemplateBank
           hop_length: @hop_length,
           n_fft: @n_fft,
           compression_factor: @compression_factor
-        ).chromas
-
-        chromas.map!(&:raw)
+        ).chromas.map(&:raw)
 
         chords = song.ground_truth
 
@@ -194,17 +190,19 @@ class TemplateBank
   end
 
   def songs_by_fold
+    return @songs_lists if @songs_lists
+
     all_songs = Song.all
 
-    songs_by_fold = (1.0 * all_songs.size / @folds).ceil
+    number_of_songs_by_fold = (1.0 * all_songs.size / @folds).ceil
 
-    songs_lists = all_songs.shuffle.each_slice(songs_by_fold).to_a
+    @songs_lists = all_songs.shuffle.each_slice(number_of_songs_by_fold).to_a
 
-    songs_lists.each_with_index do |songs, fold|
+    @songs_lists.each_with_index do |songs, fold|
       content = songs.map { |song| song.audio.path }.join("\n")
       write(path(fold, kind: :list), content)
     end
 
-    songs_lists
+    @songs_lists
   end
 end

@@ -15,11 +15,11 @@ Gruff::Bar.new.tap do |g|
   g.show_labels_for_bar_values = true
 
   experiments.each do |name, experiment|
-    g.data name, experiment.results.map { |_, h| h['precision'] }.max
+    g.data name, experiment.results.map { |_, h| h['precision'] }.mean
   end
 
   g.minimum_value = 0
-  g.maximum_value = 1
+  g.maximum_value = 0.4
 
   g.write "figs/notebooks/#{png_name}"
 end ; 1

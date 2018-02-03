@@ -1,0 +1,12 @@
+Chord Recognition experiment with the following parameters:
+
+	chroma_algorithm     => cqt
+	templates            => t(cqt-2-2-4096-2048-50)
+	templates_norm       => 
+	chromas_norm         => 2
+	smooth_chromas       => 5
+	post_filtering       => false
+	n_fft                => 4096
+	hop_length           => 2048
+	compression_factor   => 50
+

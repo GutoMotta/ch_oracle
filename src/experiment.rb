@@ -2,7 +2,7 @@ class Experiment
   def initialize(chroma_algorithm: :stft, templates: :bin,
                  templates_norm: 2, chromas_norm: 2,
                  smooth_chromas: 0, post_filtering: false,
-                 n_fft: 2048, hop_length: 512,
+                 n_fft: 4096, hop_length: 2048,
                  verbose: true, compression_factor: 0)
     @templates = TemplateBank.new(
       binary: templates == :bin,
@@ -67,6 +67,17 @@ class Experiment
     TXT
   end
 
+  def report
+    _result = best_result
+    numbers = _result['mean'], _result['stdev'], _result['max']
+
+    puts
+    puts numbers.map { |number| format_for_result(number) }.join(' & ')
+    puts
+
+    nil
+  end
+
   def best_fold
     fold, result = results.max_by { |fold, result| result['precision'] }
     {
@@ -75,7 +86,11 @@ class Experiment
   end
 
   def best_precision
-    results.max_by { |fold, result| result['precision'] }[1]['precision']
+    best_result['precision']
+  end
+
+  def best_result
+    results.max_by { |fold, result| result['precision'] }.last
   end
 
   def results
@@ -104,7 +119,8 @@ class Experiment
         smooth_chromas: @smooth_chromas,
         post_filtering: @post_filtering,
         hop_length: @hop_length,
-        n_fft: @n_fft
+        n_fft: @n_fft,
+        compression_factor: @compression_factor
       }
     ]
   end
@@ -112,7 +128,7 @@ class Experiment
   private
 
   def already_ran?
-    File.exists?(path_of :results)
+    File.exists?(results_path)
   end
 
   def run
@@ -140,19 +156,16 @@ class Experiment
   end
 
   def average(results)
-    size = results.size
-    precision = recall = f_measure = 0
-
-    results.each do |result|
-      precision += result['precision']
-      recall += result['recall']
-      f_measure += result['f_measure']
-    end
+    precisions = results.map { |result| result['precision'] }
+    mean = precisions.mean
+    stdev = precisions.standard_deviation
 
     {
-      'precision' => precision.to_f / size,
-      'recall' => recall.to_f / size,
-      'f_measure' => f_measure.to_f / size
+      'mean' => mean,
+      'stdev' => stdev,
+      'precision' => mean,
+      'max' => precisions.max,
+      'min' => precisions.min
     }
   end
 
@@ -174,5 +187,9 @@ class Experiment
 
   def path_of(file, file_format=:yml)
     "#{directory}/#{[file].flatten.join("/")}.#{file_format}"
+  end
+
+  def format_for_result(number)
+    "${#{(100.0 * number).round(2)}}\\%$"
   end
 end

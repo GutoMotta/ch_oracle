@@ -40,8 +40,11 @@ class Chroma
   def compressed_feature
     return @compressed_feature if @compressed_feature
 
-    vector_feature = Vector[*@feature]
-    vector_feature.map! { |i| Math.log(1 + i * @compression_factor) }
-    @compressed_feature ||= vector_feature.normalize
+    compressed = @feature.map { |i| Math.log(1 + i * @compression_factor) }
+    vector_feature = Vector[*compressed]
+
+    return vector_feature.to_a if vector_feature.norm.zero?
+
+    @compressed_feature ||= vector_feature.normalize.to_a
   end
 end

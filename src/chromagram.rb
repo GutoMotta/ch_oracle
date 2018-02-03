@@ -1,5 +1,5 @@
 class Chromagram < ChorsFile
-  def initialize(song, chroma_algorithm, norm, n_fft: 2048, hop_length: 512,
+  def initialize(song, chroma_algorithm, norm, n_fft: 4096, hop_length: 2048,
                  compression_factor: 0, sr: 22050)
     unless %i(stft cqt).include?(chroma_algorithm)
       raise "invalid chroma chroma_algorithm: #{chroma_algorithm}"
@@ -11,6 +11,7 @@ class Chromagram < ChorsFile
     @n_fft = n_fft
     @hop_length = hop_length
     @sr = sr
+    @compression_factor = compression_factor
 
     prefix = chroma_algorithm, norm, n_fft, hop_length, compression_factor
 
@@ -33,7 +34,7 @@ class Chromagram < ChorsFile
     chromas = chromas.transpose.map.with_index do |chroma, i|
       on = i * frame_duration
       off = on + frame_duration
-      Chroma.new(on, off, chroma)
+      Chroma.new(on, off, chroma, compression_factor: @compression_factor)
     end
 
     write chromas.map(&:to_s).join("\n")

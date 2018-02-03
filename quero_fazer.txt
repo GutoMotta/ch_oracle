@@ -1,0 +1,8 @@
+Quero fazer:
+- 1 gráfico para múltiplos valores de compressão espectral, com 4 linhas:
+  - CQT binários
+  - CQT aprendidos
+  - STFT binários
+  - STFT aprendidos
+- Pra cada uma das 4 linhas anteriores, fazer um gráfico da mesma linha com
+  diferentes valores de suavização temporal

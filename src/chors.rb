@@ -13,6 +13,27 @@ module Gruff
   end
 end
 
+class Array
+  def sum
+    inject(:+)
+  end
+
+  def mean
+    sum / size.to_f
+  end
+
+  def sample_variance
+    m = mean
+    sum = inject(0) { |accum, i| accum + (i - m) ** 2 }
+    sum / (size).to_f
+  end
+
+  def standard_deviation
+    Math.sqrt(sample_variance)
+  end
+end
+
+
 require File.expand_path("../chors_file.rb", __FILE__)
 require File.expand_path("../annotation_loop.rb", __FILE__)
 require File.expand_path("../chroma.rb", __FILE__)

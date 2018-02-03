@@ -115,8 +115,14 @@ RELATOS:
     hop_length = 2048
 
   5
-    Testar o espectral enhancement do Müller (pelo que entendi é só aplicar um
-    log no chromagrama, mas confirme isso no livro)
+    Testei a compressão logarítmica do Muller. Nenhum resultado. Na verdade, a
+    média de precisões cai um pouco. Vou dar uma olhada nos resultados
+    individuais, mas, ao que tudo indica, a compressão logarítmica não surte
+    efeito positivo.
+
+    Usei o logarítmo natural, pois o livro não especifica nenhuma base (e em
+    outros usos de log no livro se especifica explicitamente as bases 10 e 2,
+    por isso suponho que a base padrão utilizada seja 'e').
 
 
   ÚLTIMOS PASSOS:
@@ -128,6 +134,5 @@ RELATOS:
 
     1) Fazer uma rotina que gera as visualizações de templates de forma mais
        automática.
-    3) Pense em aliasing e na SR que você está usando. O que está acontecendo
-       com as frequências muito agudas? Será que não estão sendo rebatidas??
+
 
