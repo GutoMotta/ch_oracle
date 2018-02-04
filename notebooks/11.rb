@@ -1,7 +1,6 @@
 png_name = '11-cqt-stft-learn-compressao.png'
 
 compression_factors = 0, 5, 10, 20, 30, 50, 80, 100
-smooth_windows = 0, 5, 10, 12
 
 experiments = {
   'STFT' => compression_factors.map do |compression_factor|
@@ -31,7 +30,7 @@ Gruff::Line.new('900x600').tap do |g|
 
   experiments.each do |name, list|
     data = list.zip(compression_factors).map do |exp, k|
-      [k, exp.results.map { |_, h| h['precision'] }.max]
+      [k, exp.results_mean['mean']]
     end
     data = data.transpose
 

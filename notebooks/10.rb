@@ -1,4 +1,4 @@
-png_name = 'bin-compressao.png'
+png_name = '10-bin-compressao.png'
 
 compression_factors = 0, 5, 10, 30, 50, 80, 100
 experiments = {
@@ -25,9 +25,10 @@ Gruff::Line.new('900x600').tap do |g|
 
   experiments.each do |name, list|
     data = list.zip(compression_factors).map do |exp, k|
-      [k, exp.results.map { |_, h| h['precision'] }.max]
+      [k, exp.results_mean['mean']]
     end
 
+    p data
     data = data.transpose
 
     g.dataxy name, data[0], data[1]

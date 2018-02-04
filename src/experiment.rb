@@ -28,6 +28,10 @@ class Experiment
     @id ||= attributes.join("_")
   end
 
+  def final_result
+    results.map { |_, h| h['precision'] }.mean
+  end
+
   def attributes
     @attributes ||= [
       @chroma_algorithm,
@@ -68,7 +72,7 @@ class Experiment
   end
 
   def report
-    _result = best_result
+    _result = results_mean
     numbers = _result['mean'], _result['stdev'], _result['max']
 
     puts
@@ -76,6 +80,18 @@ class Experiment
     puts
 
     nil
+  end
+
+  def mean_mean_mean_mean
+    results_mean['mean']
+  end
+
+  def results_mean
+    {
+      'mean' => results.map { |r| r[1]['mean'] }.mean,
+      'stdev' => results.map { |r| r[1]['stdev'] }.mean,
+      'max' => results.map { |r| r[1]['max'] }.mean
+    }
   end
 
   def best_fold
